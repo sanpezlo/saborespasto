@@ -1,8 +1,12 @@
+import Head from "next/head";
 import Link from "next/link";
 
 export default function CrearCuenta() {
   return (
     <>
+      <Head>
+        <title>Sabores Pasto - Crear cuenta</title>
+      </Head>
       <main className="bg-white">
         <div className="relative isolate px-6 lg:px-8">
           <div

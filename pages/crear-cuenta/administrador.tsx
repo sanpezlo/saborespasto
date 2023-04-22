@@ -8,6 +8,7 @@ import Modal from "@/components/modal";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { CreateAccountSchema } from "@/types/Account";
 import { ZodError } from "zod";
+import Head from "next/head";
 
 export default function CrearCuentaAdministrador() {
   const router = useRouter();
@@ -53,6 +54,9 @@ export default function CrearCuentaAdministrador() {
 
   return (
     <>
+      <Head>
+        <title> Sabores Pasto - Crear Cuenta Administrador </title>
+      </Head>
       <main className="mx-auto flex max-w-7xl items-center justify-center">
         <form className="bg-white " onSubmit={handleSubmit}>
           <div className="space-y-12">
