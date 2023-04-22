@@ -19,6 +19,7 @@ export const CreateAccountSchema = z.object({
       required_error: "El nombre es requerido",
       invalid_type_error: "El nombre debe ser una cadena de texto",
     })
+    .min(3, { message: "El nombre debe tener al menos 3 caracteres" })
     .nonempty({ message: "El nombre no puede estar vacío" }),
   email: z
     .string({
@@ -44,6 +45,9 @@ export const CreateAccountSchema = z.object({
     .string({
       required_error: "La dirección es requerida",
       invalid_type_error: "La dirección debe ser una cadena de texto",
+    })
+    .min(10, {
+      message: "La dirección debe tener al menos 10 caracteres",
     })
     .nullable()
     .default(null),

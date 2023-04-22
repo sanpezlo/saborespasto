@@ -19,10 +19,14 @@ export const CreateRestaurantSchema = z.object({
     required_error: "El nombre es requerido",
     invalid_type_error: "El nombre debe ser una cadena de texto",
   }),
-  description: z.string({
-    required_error: "La descripción es requerida",
-    invalid_type_error: "La descripción debe ser una cadena de texto",
-  }),
+  description: z
+    .string({
+      required_error: "La descripción es requerida",
+      invalid_type_error: "La descripción debe ser una cadena de texto",
+    })
+    .min(10, {
+      message: "La descripción debe tener al menos 10 caracteres",
+    }),
   slug: z
     .string({
       required_error: "El slug es requerido",
@@ -32,10 +36,14 @@ export const CreateRestaurantSchema = z.object({
       message:
         "El slug debe ser una cadena de texto en minúsculas y sin espacios",
     }),
-  address: z.string({
-    required_error: "La dirección es requerida",
-    invalid_type_error: "La dirección debe ser una cadena de texto",
-  }),
+  address: z
+    .string({
+      required_error: "La dirección es requerida",
+      invalid_type_error: "La dirección debe ser una cadena de texto",
+    })
+    .min(10, {
+      message: "La dirección debe tener al menos 10 caracteres",
+    }),
   phone: z
     .string({
       required_error: "El teléfono es requerido",
