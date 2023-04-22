@@ -1,4 +1,8 @@
+import { Dispatch, SetStateAction } from "react";
+import { ZodError } from "zod";
+
 import { ErrorResponse, ErrorResponseSchema } from "@/types/ErrorResponse";
+import { ModalErrorProps } from "@/components/modalError";
 
 export function parseErrorResponse(e: unknown): ErrorResponse {
   const parsed = ErrorResponseSchema.safeParse(e);
@@ -27,4 +31,32 @@ export function handleError(raw: unknown, response: Response): never {
       status: response.status,
     }
   );
+}
+
+export function handleModalError(
+  error: unknown,
+  setModalError: Dispatch<SetStateAction<ModalErrorProps | null>>
+) {
+  if (error instanceof ZodError) {
+    return setModalError({
+      title: "Error: Datos inválidos",
+      description: "",
+      list: error.issues.map((issue) => issue.message),
+    });
+  }
+
+  const e = parseErrorResponse(error);
+  if (e.status === 400) {
+    return setModalError({
+      title: "Error: Datos inválidos",
+      description: e.error.message,
+      list: [],
+    });
+  }
+
+  return setModalError({
+    title: "Error",
+    description: "Ha ocurrido un error inesperado",
+    list: [],
+  });
 }

@@ -45,7 +45,6 @@ function errorHandler(err: unknown, res: NextApiResponse<ErrorResponse>) {
       status: 400,
     });
   } else {
-    console.error(err);
     return res.status(500).json({
       error: { message: "Internal Server Error", err: err },
       status: createHttpError.isHttpError(err) ? err.statusCode : 500,

@@ -3,52 +3,44 @@ import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
 
 import { apiFetcher } from "@/lib/fetcher";
-import { parseErrorResponse } from "@/lib/error";
-import Modal from "@/components/modal";
-import { ErrorResponse } from "@/types/ErrorResponse";
-import { CreateAccountSchema } from "@/types/Account";
-import { ZodError } from "zod";
+import { handleModalError } from "@/lib/error";
+import ModalError, { ModalErrorProps } from "@/components/modalError";
+import {
+  Account,
+  AccountSchema,
+  CreateAccount,
+  CreateAccountSchema,
+} from "@/types/Account";
 import Head from "next/head";
+import { useAuthContext } from "@/context/Auth";
 
 export default function CrearCuentaAdministrador() {
   const router = useRouter();
-  const [form, setForm] = useState({
+  const { setAccount } = useAuthContext();
+
+  const [form, setForm] = useState<CreateAccount>({
     name: "",
     email: "",
     password: "",
+    phone: null,
+    address: null,
     admin: true,
   });
-  const [modal, setModal] = useState<{
-    title: string;
-    description: string;
-    list: string[];
-  } | null>(null);
+  const [modalError, setModalError] = useState<ModalErrorProps | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     try {
       e.preventDefault();
-      const test = CreateAccountSchema.parse(form);
-      const { data } = await apiFetcher("/accounts", {
+      const createAccount = CreateAccountSchema.parse(form);
+      const { data } = await apiFetcher<Account>("/accounts", {
         method: "POST",
-        body: JSON.stringify(test),
+        body: JSON.stringify(createAccount),
+        schema: AccountSchema,
       });
+      setAccount(data);
       router.push("/crear-restaurante");
     } catch (error) {
-      if (error instanceof ZodError) {
-        setModal({
-          title: "Error: Datos inválidos",
-          description: "",
-          list: [
-            "El nombre de usuario debe tener al menos 1 caracteres",
-            "El correo electrónico debe ser valido y único",
-            "La contraseña debe tener al menos 8 caracteres, contener una combinación de letras y números",
-          ],
-        });
-      }
-      const e = parseErrorResponse(error);
-      if (e.status === 400) {
-        setModal({ title: "Error", description: e.error.message, list: [] });
-      }
+      handleModalError(error, setModalError);
     }
   };
 
@@ -159,7 +151,7 @@ export default function CrearCuentaAdministrador() {
                 href="/crear-cuenta"
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
-                Cancelar
+                Atras
               </Link>
               <button
                 type="submit"
@@ -171,12 +163,12 @@ export default function CrearCuentaAdministrador() {
           </div>
         </form>
       </main>
-      {modal ? (
-        <Modal
-          title={modal?.title ?? ""}
-          description={modal?.description ?? ""}
-          list={modal?.list ?? []}
-          onClose={() => setModal(null)}
+      {modalError ? (
+        <ModalError
+          title={modalError?.title ?? ""}
+          description={modalError?.description ?? ""}
+          list={modalError?.list ?? []}
+          onClose={() => setModalError(null)}
         />
       ) : (
         <></>

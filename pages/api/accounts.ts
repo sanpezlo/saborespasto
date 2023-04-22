@@ -17,13 +17,12 @@ async function createAccount(
       email: createAccount.email,
     },
   });
+
   if (current_account) {
-    res
-      .status(400)
-      .json({
-        error: { message: "Account with this email already exists" },
-        status: 400,
-      });
+    res.status(400).json({
+      error: { message: "Este email ya está registrado" },
+      status: 400,
+    });
     return;
   }
   const account = await prisma.account.create({

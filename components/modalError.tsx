@@ -2,17 +2,19 @@ import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
-export default function Modal({
-  title,
-  description,
-  list = [],
-  onClose = () => {},
-}: {
+export interface ModalErrorProps {
   title: string;
   description: string;
   list?: string[];
   onClose?: () => void;
-}) {
+}
+
+export default function ModalError({
+  title,
+  description,
+  list = [],
+  onClose = () => {},
+}: ModalErrorProps) {
   const [open, setOpen] = useState(true);
 
   const cancelButtonRef = useRef(null);
