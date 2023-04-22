@@ -3,7 +3,10 @@ import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
+import { useAuthContext } from "@/context/Auth";
+
 export default function Header() {
+  const { account } = useAuthContext();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -112,15 +115,21 @@ export default function Header() {
         </div> */}
         {/* </Popover.Group> */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end items-center">
-          <Link
-            href="/crear-cuenta"
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 leading-6"
-          >
-            Registrarse
-          </Link>
-          {/* <Link href="#" className="text-sm font-semibold leading-6 text-gray-900">
+          {account ? (
+            <></>
+          ) : (
+            <>
+              <Link
+                href="/crear-cuenta"
+                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 leading-6"
+              >
+                Registrarse
+              </Link>
+              {/* <Link href="#" className="text-sm font-semibold leading-6 text-gray-900">
             Log in <span aria-hidden="true">&rarr;</span>
           </Link> */}
+            </>
+          )}
         </div>
       </nav>
 
@@ -202,18 +211,24 @@ export default function Header() {
                 </a>
               </div> */}
               <div className="py-6">
-                <Link
-                  href="/crear-cuenta"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  Registrarse
-                </Link>
-                {/* <a
+                {account ? (
+                  <></>
+                ) : (
+                  <>
+                    <Link
+                      href="/crear-cuenta"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    >
+                      Registrarse
+                    </Link>
+                    {/* <a
                   href="#"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Log in
                 </a> */}
+                  </>
+                )}
               </div>
             </div>
           </div>
