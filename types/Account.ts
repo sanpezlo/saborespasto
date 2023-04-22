@@ -52,6 +52,12 @@ export const CreateAccountSchema = z.object({
       required_error: "El teléfono es requerido",
       invalid_type_error: "El teléfono debe ser una cadena de texto",
     })
+    .length(10, {
+      message: "El teléfono debe tener 10 dígitos",
+    })
+    .regex(new RegExp("^[0-9]*$"), {
+      message: "El teléfono debe ser una cadena de texto numérica",
+    })
     .nullable()
     .default(null),
   admin: z.boolean({
