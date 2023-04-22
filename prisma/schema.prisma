@@ -11,14 +11,30 @@ datasource db {
 }
 
 model Account {
-  id        String    @id @default(uuid())
-  name      String
-  email     String    @unique
-  password  String
-  address   String?
-  phone     String?
-  admin     Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  id         String      @id @default(uuid())
+  name       String
+  email      String      @unique
+  password   String
+  address    String?
+  phone      String?
+  admin      Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
+  restaurant Restaurant?
+}
+
+model Restaurant {
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  slug        String    @unique
+  address     String
+  phone       String
+  image       String
+  admin       Account   @relation(fields: [adminId], references: [id])
+  adminId     String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 }
