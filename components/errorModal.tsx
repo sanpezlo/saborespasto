@@ -2,19 +2,19 @@ import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
-export interface ModalErrorProps {
+export interface ErrorModalProps {
   title: string;
   description: string;
   list?: string[];
   onClose?: () => void;
 }
 
-export default function ModalError({
+export default function ErrorModal({
   title,
   description,
   list = [],
   onClose = () => {},
-}: ModalErrorProps) {
+}: ErrorModalProps) {
   const [open, setOpen] = useState(true);
 
   const cancelButtonRef = useRef(null);

@@ -63,10 +63,6 @@ export const CreateRestaurantSchema = z.object({
     .url({
       message: "La imagen debe ser una url válida",
     }),
-  adminId: z.string({
-    required_error: "El id del administrador es requerido",
-    invalid_type_error: "El id del administrador debe ser una cadena de texto",
-  }),
 });
 
 export type CreateRestaurant = z.infer<typeof CreateRestaurantSchema>;

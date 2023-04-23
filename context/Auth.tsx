@@ -4,19 +4,24 @@ import {
   SetStateAction,
   createContext,
   useContext,
-  useState,
 } from "react";
+import useSWR from "swr";
 
-import { Account } from "@/types/Account";
+import { Account, AccountSchema } from "@/types/Account";
+import { apiFetcherSWR } from "@/lib/fetcher";
+import { ErrorResponse } from "@/types/ErrorResponse";
+import { getCookies } from "cookies-next";
 
 type AuthenticationContext = {
   account?: Account;
-  setAccount: Dispatch<SetStateAction<Account | undefined>>;
+  isLoading: boolean;
+  mutate: Dispatch<SetStateAction<Account | undefined>>;
 };
 
 const AuthContext = createContext<AuthenticationContext>({
   account: undefined,
-  setAccount: () => {},
+  isLoading: true,
+  mutate: () => {},
 });
 
 type AuthProviderProps = {
@@ -24,13 +29,24 @@ type AuthProviderProps = {
 };
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [account, setAccount] = useState<Account | undefined>(undefined);
+  const {
+    data: account,
+    isLoading,
+    mutate,
+  } = useSWR<Account, ErrorResponse>(
+    "/accounts/self",
+    apiFetcherSWR({ schema: AccountSchema }),
+    {
+      revalidateOnFocus: false,
+    }
+  );
 
   return (
     <AuthContext.Provider
       value={{
         account,
-        setAccount: setAccount,
+        isLoading,
+        mutate: mutate,
       }}
     >
       {children}

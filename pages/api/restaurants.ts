@@ -1,9 +1,11 @@
+import createHttpError from "http-errors";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 
 import { CreateRestaurantSchema, Restaurant } from "@/types/Restaurant";
-import { apiHandler } from "@/lib/api";
+import { apiHandler, withAdmin } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
+import { Account } from "@/types/Account";
 
 const prisma = new PrismaClient();
 
@@ -11,21 +13,19 @@ async function createRestaurant(
   req: NextApiRequest,
   res: NextApiResponse<Restaurant | ErrorResponse>
 ) {
+  const account = JSON.parse(req.headers.account as string) as Account;
   const createRestaurant = CreateRestaurantSchema.parse(req.body);
 
   const restaurantAlreadyCreated = await prisma.restaurant.findUnique({
     where: {
-      adminId: createRestaurant.adminId,
+      adminId: account.id,
     },
   });
 
-  if (restaurantAlreadyCreated) {
-    res.status(400).json({
-      error: { message: "El administrador ya tiene un restaurante" },
-      status: 400,
-    });
-    return;
-  }
+  if (restaurantAlreadyCreated)
+    throw new createHttpError.BadRequest(
+      "El administrador ya tiene un restaurante"
+    );
 
   const invalidSlug = await prisma.restaurant.findUnique({
     where: {
@@ -33,17 +33,15 @@ async function createRestaurant(
     },
   });
 
-  if (invalidSlug) {
-    res.status(400).json({
-      error: { message: "El restaurante con este slug ya existe" },
-      status: 400,
-    });
-    return;
-  }
+  if (invalidSlug)
+    throw new createHttpError.BadRequest(
+      "El restaurante con este slug ya existe"
+    );
 
   const restaurant = await prisma.restaurant.create({
     data: {
       ...createRestaurant,
+      adminId: account.id,
     },
   });
 
@@ -51,5 +49,5 @@ async function createRestaurant(
 }
 
 export default apiHandler({
-  POST: createRestaurant,
+  POST: withAdmin(createRestaurant),
 });
