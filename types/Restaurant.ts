@@ -15,10 +15,14 @@ export const RestaurantSchema = z.object({
 });
 
 export const CreateRestaurantSchema = z.object({
-  name: z.string({
-    required_error: "El nombre es requerido",
-    invalid_type_error: "El nombre debe ser una cadena de texto",
-  }),
+  name: z
+    .string({
+      required_error: "El nombre es requerido",
+      invalid_type_error: "El nombre debe ser una cadena de texto",
+    })
+    .max(50, {
+      message: "El nombre debe tener máximo 50 caracteres",
+    }),
   description: z
     .string({
       required_error: "La descripción es requerida",
@@ -26,6 +30,9 @@ export const CreateRestaurantSchema = z.object({
     })
     .min(10, {
       message: "La descripción debe tener al menos 10 caracteres",
+    })
+    .max(280, {
+      message: "La descripción debe tener máximo 280 caracteres",
     }),
   slug: z
     .string({

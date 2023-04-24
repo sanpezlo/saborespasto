@@ -20,6 +20,7 @@ export const CreateAccountSchema = z.object({
       invalid_type_error: "El nombre debe ser una cadena de texto",
     })
     .min(3, { message: "El nombre debe tener al menos 3 caracteres" })
+    .max(50, { message: "El nombre debe tener máximo 50 caracteres" })
     .nonempty({ message: "El nombre no puede estar vacío" }),
   email: z
     .string({
