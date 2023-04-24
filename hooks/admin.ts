@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export function useAdmin() {
-  const { account, isLoading: isLoadingAccount } = useAuthContext();
+  const { account, isLoadingAccount } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {

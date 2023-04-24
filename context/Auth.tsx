@@ -13,14 +13,14 @@ import { ErrorResponse } from "@/types/ErrorResponse";
 
 type AuthenticationContext = {
   account?: Account;
-  isLoading: boolean;
-  mutate: Dispatch<SetStateAction<Account | undefined>>;
+  isLoadingAccount: boolean;
+  mutateAccount: Dispatch<SetStateAction<Account | undefined>>;
 };
 
 const AuthContext = createContext<AuthenticationContext>({
   account: undefined,
-  isLoading: true,
-  mutate: () => {},
+  isLoadingAccount: true,
+  mutateAccount: () => {},
 });
 
 type AuthProviderProps = {
@@ -30,8 +30,8 @@ type AuthProviderProps = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const {
     data: account,
-    isLoading,
-    mutate,
+    isLoading: isLoadingAccount,
+    mutate: mutateAccount,
   } = useSWR<Account, ErrorResponse>(
     "/accounts/self",
     apiFetcherSWR({ schema: AccountSchema }),
@@ -45,8 +45,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider
       value={{
         account,
-        isLoading,
-        mutate: mutate,
+        isLoadingAccount,
+        mutateAccount,
       }}
     >
       {children}

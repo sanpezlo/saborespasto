@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 export function useGuest() {
   const router = useRouter();
-  const { account, isLoading: isLoadingAccount } = useAuthContext();
+  const { account, isLoadingAccount } = useAuthContext();
 
   useEffect(() => {
     if (isLoadingAccount) return;

@@ -22,7 +22,7 @@ import { useGuest } from "@/hooks/guest";
 export default function CrearCuentaAdministrador() {
   const router = useRouter();
   const { isLoadingAccount } = useGuest();
-  const { mutate } = useAuthContext();
+  const { mutateAccount } = useAuthContext();
 
   const [form, setForm] = useState<CreateAccount>({
     name: "",
@@ -50,7 +50,7 @@ export default function CrearCuentaAdministrador() {
           body: JSON.stringify(createAccount),
           schema: AccountSchema,
         });
-        mutate(account);
+        mutateAccount(account);
 
         setLoadingModal({
           title: "Iniciando sesión...",
@@ -73,7 +73,7 @@ export default function CrearCuentaAdministrador() {
         setLoadingModal(null);
       }
     },
-    [form, mutate, router]
+    [form, mutateAccount, router]
   );
 
   if (isLoadingAccount)

@@ -7,7 +7,7 @@ import { useAuthContext } from "@/context/Auth";
 import Loading from "./loading";
 
 export default function Header() {
-  const { account, isLoading } = useAuthContext();
+  const { account, isLoadingAccount } = useAuthContext();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -116,7 +116,7 @@ export default function Header() {
         </div> */}
         {/* </Popover.Group> */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end items-center">
-          {isLoading ? (
+          {isLoadingAccount ? (
             <Loading />
           ) : account ? (
             <></>
@@ -217,7 +217,11 @@ export default function Header() {
                 </a>
               </div> */}
               <div className="py-6">
-                {account ? (
+                {isLoadingAccount ? (
+                  <div className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                    <Loading />
+                  </div>
+                ) : account ? (
                   <></>
                 ) : (
                   <>
