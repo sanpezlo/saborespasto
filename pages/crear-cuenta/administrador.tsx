@@ -14,7 +14,7 @@ import {
 import Head from "next/head";
 import { useAuthContext } from "@/context/Auth";
 import { AuthResponse } from "@/types/AuthResponse";
-import LoadingModal from "@/components/loadingModal";
+import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
 import { Signin } from "@/types/Signin";
 import Loading from "@/components/loading";
 import { useGuest } from "@/hooks/guest";
@@ -33,11 +33,15 @@ export default function CrearCuentaAdministrador() {
     admin: true,
   });
   const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
+    null
+  );
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
-      setIsloading(true);
+      setLoadingModal({
+        title: "Creando cuenta...",
+      });
       try {
         e.preventDefault();
         const createAccount = CreateAccountSchema.parse(form);
@@ -48,6 +52,10 @@ export default function CrearCuentaAdministrador() {
         });
         mutate(account);
 
+        setLoadingModal({
+          title: "Iniciando sesión...",
+        });
+
         const signin: Signin = {
           email: createAccount.email,
           password: createAccount.password,
@@ -55,13 +63,14 @@ export default function CrearCuentaAdministrador() {
         await apiFetcher<AuthResponse>("/signin", {
           method: "POST",
           body: JSON.stringify(signin),
+          refresh: false,
         });
 
         router.push("/crear-restaurante");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {
-        setIsloading(false);
+        setLoadingModal(null);
       }
     },
     [form, mutate, router]
@@ -73,7 +82,7 @@ export default function CrearCuentaAdministrador() {
         <title> Sabores Pasto - Crear Cuenta Administrador </title>
       </Head>
 
-      {isLoading && <LoadingModal />}
+      {loadingModal && <LoadingModal title={loadingModal.title} />}
 
       {isLoadingAccount ? (
         <main className="mx-auto flex max-w-7xl items-center justify-center">

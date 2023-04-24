@@ -11,7 +11,7 @@ import {
   CreateRestaurantSchema,
   RestaurantSchema,
 } from "@/types/Restaurant";
-import LoadingModal from "@/components/loadingModal";
+import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
 import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
 
@@ -28,11 +28,13 @@ export default function CrearRestaurante() {
     slug: "",
   });
   const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
+    null
+  );
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
-      setIsloading(true);
+      setLoadingModal({ title: "Creando restaurante..." });
       try {
         e.preventDefault();
         const createRestaurant = CreateRestaurantSchema.parse(form);
@@ -45,7 +47,7 @@ export default function CrearRestaurante() {
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {
-        setIsloading(false);
+        setLoadingModal(null);
       }
     },
     [form, router]
@@ -57,7 +59,7 @@ export default function CrearRestaurante() {
         <title> Sabores Pasto - Crear Restaurante </title>
       </Head>
 
-      {isLoading && <LoadingModal />}
+      {loadingModal && <LoadingModal title={loadingModal.title} />}
 
       {isLoadingAccount ? (
         <main className="mx-auto flex max-w-7xl items-center justify-center">

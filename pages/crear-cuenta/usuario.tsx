@@ -13,7 +13,7 @@ import {
 } from "@/types/Account";
 import Head from "next/head";
 import { AuthResponse } from "@/types/AuthResponse";
-import LoadingModal from "@/components/loadingModal";
+import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
 import { Signin } from "@/types/Signin";
 import Loading from "@/components/loading";
 import { useGuest } from "@/hooks/guest";
@@ -33,11 +33,15 @@ export default function CrearCuentaUsuario() {
     admin: false,
   });
   const [errorModal, setModalError] = useState<ErrorModalProps | null>(null);
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
+    null
+  );
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
-      setIsloading(true);
+      setLoadingModal({
+        title: "Creando cuenta...",
+      });
       try {
         e.preventDefault();
         const createAccount = CreateAccountSchema.parse(form);
@@ -48,6 +52,10 @@ export default function CrearCuentaUsuario() {
         });
         mutate(account);
 
+        setLoadingModal({
+          title: "Iniciando sesión...",
+        });
+
         const signin: Signin = {
           email: createAccount.email,
           password: createAccount.password,
@@ -55,13 +63,14 @@ export default function CrearCuentaUsuario() {
         await apiFetcher<AuthResponse>("/signin", {
           method: "POST",
           body: JSON.stringify(signin),
+          refresh: false,
         });
 
         router.push("/");
       } catch (error) {
         handleErrorModal(error, setModalError);
       } finally {
-        setIsloading(false);
+        setLoadingModal(null);
       }
     },
     [form, mutate, router]
@@ -73,7 +82,7 @@ export default function CrearCuentaUsuario() {
         <title> Sabores Pasto - Crear Cuenta Usuario </title>
       </Head>
 
-      {isLoading && <LoadingModal />}
+      {loadingModal && <LoadingModal title={loadingModal.title} />}
       {isLoadingAccount ? (
         <main className="mx-auto flex max-w-7xl items-center justify-center">
           <Loading />

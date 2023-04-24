@@ -3,11 +3,13 @@ import { Dialog, Transition } from "@headlessui/react";
 
 import Loading from "@/components/loading";
 
+export interface LoadingModalProps {
+  title?: string;
+}
+
 export default function LoadingModal({
   title = "Cargando...",
-}: {
-  title?: string;
-}) {
+}: LoadingModalProps) {
   const cancelButtonRef = useRef(null);
 
   return (

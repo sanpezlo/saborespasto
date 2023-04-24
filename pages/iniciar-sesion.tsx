@@ -7,7 +7,7 @@ import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
 import { Signin, SigninSchema } from "@/types/Signin";
 import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
-import LoadingModal from "@/components/loadingModal";
+import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
 import { useSWRConfig } from "swr";
 import Loading from "@/components/loading";
 import { useGuest } from "@/hooks/guest";
@@ -22,11 +22,15 @@ export default function IniciarSesion() {
     password: "",
   });
   const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
+    null
+  );
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
-      setIsloading(true);
+      setLoadingModal({
+        title: "Iniciando sesión...",
+      });
       try {
         e.preventDefault();
         const signin = SigninSchema.parse(form);
@@ -36,13 +40,14 @@ export default function IniciarSesion() {
             email: signin.email,
             password: signin.password,
           }),
+          refresh: false,
         });
         mutate("/accounts/self");
         router.push("/");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {
-        setIsloading(false);
+        setLoadingModal(null);
       }
     },
     [form, router, mutate]
@@ -54,7 +59,7 @@ export default function IniciarSesion() {
         <title> Sabores Pasto - Iniciar Sesion</title>
       </Head>
 
-      {isLoading && <LoadingModal />}
+      {loadingModal && <LoadingModal title={loadingModal.title} />}
       {isLoadingAccount ? (
         <main className="mx-auto flex max-w-7xl items-center justify-center">
           <Loading />
