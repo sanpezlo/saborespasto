@@ -36,6 +36,9 @@ export async function apiFetcher<T>(
   path: string,
   opts?: APIOptions<T>
 ): Promise<{ data: T; response: Response }> {
+  if (opts?.refresh === undefined || opts.refresh === null)
+    opts = { ...opts, refresh: true };
+
   const pathWithQuery = `${path}${
     opts?.query ? "?" + opts.query.toString() : ""
   }`;
@@ -45,13 +48,13 @@ export async function apiFetcher<T>(
   const data = await getData(response);
 
   if (!isSuccessStatus(response.status)) {
-    if (response.status === 401 && !opts?.refresh) {
+    if (response.status === 401 && opts?.refresh) {
       const request = buildRequest("/refresh", {
         method: "POST",
       });
       const response = await fetch(request);
       if (isSuccessStatus(response.status)) {
-        return apiFetcher(path, { ...opts, refresh: true });
+        return apiFetcher(path, { ...opts, refresh: false });
       }
     }
     handleError(data, response);

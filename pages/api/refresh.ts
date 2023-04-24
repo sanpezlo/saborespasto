@@ -11,9 +11,10 @@ import {
   REFRESH_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_SECRET,
 } from "@/lib/config";
-import { RefreshPayload } from "@/types/AuthPayload";
+import { RefreshPayload, RefreshPayloadSchema } from "@/types/AuthPayload";
 import { accessToken, refreshToken } from "@/lib/auth";
 import { getCookie, hasCookie, setCookie } from "cookies-next";
+import { RefreshSchema } from "@/types/Refresh";
 
 const prisma = new PrismaClient();
 
@@ -26,13 +27,15 @@ async function refresh(
       refresh_token: getCookie("refresh_token", { req, res }),
     };
   }
-  const { refresh_token } = req.body;
+  const refresh = RefreshSchema.parse(req.body);
 
-  const payload = decode(refresh_token) as RefreshPayload;
+  const payload = decode(refresh.refresh_token) as RefreshPayload;
+
+  const refreshPayload = RefreshPayloadSchema.parse(payload);
 
   const current_account = await prisma.account.findUnique({
     where: {
-      id: payload.id,
+      id: refreshPayload.id,
     },
   });
 
@@ -40,7 +43,7 @@ async function refresh(
     throw new createHttpError.Unauthorized("Invalid refresh token");
 
   await verify(
-    refresh_token,
+    refresh.refresh_token,
     REFRESH_TOKEN_SECRET + current_account.updatedAt.getTime()
   );
 

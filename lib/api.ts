@@ -58,9 +58,9 @@ function errorHandler(err: unknown, res: NextApiResponse<ErrorResponse>) {
   }
 }
 
-const prisma = new PrismaClient();
-
 export function withAuth(handler: NextApiHandler) {
+  const prisma = new PrismaClient();
+
   return async (req: NextApiRequest, res: NextApiResponse<ErrorResponse>) => {
     if (hasCookie("access_token", { req, res }))
       req.headers.authorization = `Bearer ${getCookie("access_token", {
