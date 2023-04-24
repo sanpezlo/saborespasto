@@ -1,30 +1,21 @@
 import Head from "next/head";
 import Link from "next/link";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { FormEvent, useCallback, useState } from "react";
 
 import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
 import { Signin, SigninSchema } from "@/types/Signin";
-import { useRouter } from "next/router";
 import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
 import LoadingModal from "@/components/loadingModal";
 import { useSWRConfig } from "swr";
-import { useAuthContext } from "@/context/Auth";
 import Loading from "@/components/loading";
+import { useGuest } from "@/hooks/guest";
 
 export default function IniciarSesion() {
-  const { mutate } = useSWRConfig();
   const router = useRouter();
-  const { account, isLoading: isLoadingAccount } = useAuthContext();
-
-  useEffect(() => {
-    if (isLoadingAccount) return;
-
-    if (account) {
-      router.push("/");
-      return;
-    }
-  }, [isLoadingAccount, account, router]);
+  const { mutate } = useSWRConfig();
+  const { isLoadingAccount } = useGuest();
 
   const [form, setForm] = useState<Signin>({
     email: "",

@@ -1,23 +1,12 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
 
 import Loading from "@/components/loading";
-import { useAuthContext } from "@/context/Auth";
+import { useGuest } from "@/hooks/guest";
 
 export default function CrearCuenta() {
-  const router = useRouter();
-  const { account, isLoading: isLoadingAccount } = useAuthContext();
+  const { isLoadingAccount } = useGuest();
 
-  useEffect(() => {
-    if (isLoadingAccount) return;
-
-    if (account) {
-      router.push("/");
-      return;
-    }
-  }, [isLoadingAccount, account, router]);
   return (
     <>
       <Head>

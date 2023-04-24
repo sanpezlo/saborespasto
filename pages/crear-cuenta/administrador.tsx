@@ -17,19 +17,12 @@ import { AuthResponse } from "@/types/AuthResponse";
 import LoadingModal from "@/components/loadingModal";
 import { Signin } from "@/types/Signin";
 import Loading from "@/components/loading";
+import { useGuest } from "@/hooks/guest";
 
 export default function CrearCuentaAdministrador() {
   const router = useRouter();
-  const { account, isLoading: isLoadingAccount, mutate } = useAuthContext();
-
-  useEffect(() => {
-    if (isLoadingAccount) return;
-
-    if (account) {
-      router.push("/");
-      return;
-    }
-  }, [isLoadingAccount, account, router]);
+  const { isLoadingAccount } = useGuest();
+  const { mutate } = useAuthContext();
 
   const [form, setForm] = useState<CreateAccount>({
     name: "",

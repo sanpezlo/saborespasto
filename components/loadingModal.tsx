@@ -3,7 +3,11 @@ import { Dialog, Transition } from "@headlessui/react";
 
 import Loading from "@/components/loading";
 
-export default function LoadingModal() {
+export default function LoadingModal({
+  title = "Cargando...",
+}: {
+  title?: string;
+}) {
   const cancelButtonRef = useRef(null);
 
   return (
@@ -46,7 +50,7 @@ export default function LoadingModal() {
                         className="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm  text-white   transition ease-in-out duration-150"
                       >
                         <Loading />
-                        Cargando...
+                        {title}
                       </Dialog.Title>
                     </div>
                   </div>

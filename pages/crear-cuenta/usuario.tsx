@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 
 import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
@@ -12,24 +12,17 @@ import {
   CreateAccountSchema,
 } from "@/types/Account";
 import Head from "next/head";
-import { useAuthContext } from "@/context/Auth";
 import { AuthResponse } from "@/types/AuthResponse";
 import LoadingModal from "@/components/loadingModal";
 import { Signin } from "@/types/Signin";
 import Loading from "@/components/loading";
+import { useGuest } from "@/hooks/guest";
+import { useAuthContext } from "@/context/Auth";
 
 export default function CrearCuentaUsuario() {
   const router = useRouter();
-  const { account, isLoading: isLoadingAccount, mutate } = useAuthContext();
-
-  useEffect(() => {
-    if (isLoadingAccount) return;
-
-    if (account) {
-      router.push("/");
-      return;
-    }
-  }, [isLoadingAccount, account, router]);
+  const { isLoadingAccount } = useGuest();
+  const { mutate } = useAuthContext();
 
   const [form, setForm] = useState<CreateAccount>({
     name: "",

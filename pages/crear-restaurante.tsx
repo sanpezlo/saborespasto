@@ -11,25 +11,13 @@ import {
   CreateRestaurantSchema,
   RestaurantSchema,
 } from "@/types/Restaurant";
-import { useAuthContext } from "@/context/Auth";
 import LoadingModal from "@/components/loadingModal";
 import Loading from "@/components/loading";
+import { useAdmin } from "@/hooks/admin";
 
 export default function CrearRestaurante() {
-  const { account, isLoading: isLoadingAccount } = useAuthContext();
+  const { isLoadingAccount } = useAdmin();
   const router = useRouter();
-
-  useEffect(() => {
-    if (isLoadingAccount) return;
-    if (!account) {
-      router.push("/crear-cuenta");
-      return;
-    }
-    if (!account.admin) {
-      router.push("404");
-      return;
-    }
-  }, [account, router, isLoadingAccount]);
 
   const [form, setForm] = useState<CreateRestaurant>({
     name: "",
