@@ -119,7 +119,18 @@ export default function Header() {
           {isLoadingAccount ? (
             <Loading />
           ) : account ? (
-            <></>
+            account.admin ? (
+              <>
+                <Link
+                  href="/mi-restaurante"
+                  className="text-sm font-semibold leading-6 text-gray-900"
+                >
+                  Mi restaurant
+                </Link>
+              </>
+            ) : (
+              <></>
+            )
           ) : (
             <>
               <Link

@@ -43,7 +43,7 @@ export default function IniciarSesion() {
           refresh: false,
         });
         mutate("/accounts/self");
-        router.push("/");
+        router.replace("/");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {

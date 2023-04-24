@@ -10,17 +10,22 @@ import useSWR from "swr";
 import { Account, AccountSchema } from "@/types/Account";
 import { apiFetcherSWR } from "@/lib/fetcher";
 import { ErrorResponse } from "@/types/ErrorResponse";
+import { Restaurant, RestaurantSchema } from "@/types/Restaurant";
 
 type AuthenticationContext = {
   account?: Account;
   isLoadingAccount: boolean;
   mutateAccount: Dispatch<SetStateAction<Account | undefined>>;
+  restaurant?: Restaurant;
+  isLoadingRestaurant: boolean;
 };
 
 const AuthContext = createContext<AuthenticationContext>({
   account: undefined,
   isLoadingAccount: true,
   mutateAccount: () => {},
+  restaurant: undefined,
+  isLoadingRestaurant: true,
 });
 
 type AuthProviderProps = {
@@ -41,12 +46,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   );
 
+  const { data: restaurant, isLoading: isLoadingRestaurant } = useSWR<
+    Restaurant,
+    ErrorResponse
+  >(
+    () => (account && account.admin ? "/restaurants/self" : null),
+    apiFetcherSWR({ schema: RestaurantSchema })
+  );
+
   return (
     <AuthContext.Provider
       value={{
         account,
         isLoadingAccount,
         mutateAccount,
+        restaurant,
+        isLoadingRestaurant,
       }}
     >
       {children}

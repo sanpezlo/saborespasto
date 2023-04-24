@@ -66,7 +66,7 @@ export default function CrearCuentaUsuario() {
           refresh: false,
         });
 
-        router.push("/");
+        router.replace("/");
       } catch (error) {
         handleErrorModal(error, setModalError);
       } finally {

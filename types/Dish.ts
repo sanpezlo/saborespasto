@@ -1,0 +1,67 @@
+import { z } from "zod";
+
+export const DishSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  price: z.number().positive(),
+  new_price: z.number().positive().nullable(),
+  image: z.string(),
+  restaurantId: z.string(),
+  createdAt: z.string().datetime().or(z.date()),
+  updatedAt: z.string().datetime().or(z.date()),
+  deletedAt: z.string().datetime().or(z.date()).nullable(),
+});
+
+export const CreateDishSchema = z.object({
+  name: z
+    .string({
+      required_error: "El nombre es requerido",
+      invalid_type_error: "El nombre debe ser una cadena de texto",
+    })
+    .min(3, {
+      message: "El nombre debe tener al menos 3 caracteres",
+    })
+    .max(50, {
+      message: "El nombre debe tener máximo 50 caracteres",
+    }),
+  description: z
+    .string({
+      required_error: "La descripción es requerida",
+      invalid_type_error: "La descripción debe ser una cadena de texto",
+    })
+    .min(10, {
+      message: "La descripción debe tener al menos 10 caracteres",
+    })
+    .max(280, {
+      message: "La descripción debe tener máximo 280 caracteres",
+    }),
+  price: z
+    .number({
+      required_error: "El precio es requerido",
+      invalid_type_error: "El precio debe ser un número",
+    })
+    .positive({
+      message: "El precio debe ser un número positivo",
+    }),
+  new_price: z
+    .number({
+      invalid_type_error: "El nuevo recio debe ser un número",
+    })
+    .positive({
+      message: "El nuevo precio debe ser un número positivo",
+    })
+    .nullable(),
+  image: z
+    .string({
+      required_error: "La imagen es requerida",
+      invalid_type_error: "La imagen debe ser una cadena de texto",
+    })
+    .url({
+      message: "La imagen debe ser una URL válida",
+    }),
+});
+
+export type Dish = z.infer<typeof DishSchema>;
+
+export type CreateDish = z.infer<typeof CreateDishSchema>;

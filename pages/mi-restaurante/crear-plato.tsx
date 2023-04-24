@@ -6,26 +6,23 @@ import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
 import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
 import Head from "next/head";
-import {
-  CreateRestaurant,
-  CreateRestaurantSchema,
-  RestaurantSchema,
-} from "@/types/Restaurant";
+
+import { CreateDish, CreateDishSchema, DishSchema } from "@/types/Dish";
 import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
 import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
+import Link from "next/link";
 
 export default function CrearRestaurante() {
   const { isLoadingAccount } = useAdmin();
   const router = useRouter();
 
-  const [form, setForm] = useState<CreateRestaurant>({
+  const [form, setForm] = useState<CreateDish>({
     name: "",
     description: "",
-    address: "",
-    phone: "",
+    price: 0,
+    new_price: null,
     image: "",
-    slug: "",
   });
   const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
   const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
@@ -34,16 +31,16 @@ export default function CrearRestaurante() {
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
-      setLoadingModal({ title: "Creando restaurante..." });
+      setLoadingModal({ title: "Creando plato..." });
       try {
         e.preventDefault();
-        const createRestaurant = CreateRestaurantSchema.parse(form);
-        const { data } = await apiFetcher("/restaurants", {
+        const createDish = CreateDishSchema.parse(form);
+        const { data } = await apiFetcher("/dishes", {
           method: "POST",
-          body: JSON.stringify(createRestaurant),
-          schema: RestaurantSchema,
+          body: JSON.stringify(createDish),
+          schema: DishSchema,
         });
-        router.replace("mi-restaurante");
+        router.replace("/mi-restaurante");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {
@@ -57,7 +54,7 @@ export default function CrearRestaurante() {
     return (
       <>
         <Head>
-          <title> Sabores Pasto - Crear Restaurante</title>
+          <title> Sabores Pasto - Crear Plato</title>
         </Head>
         <main className="mx-auto flex max-w-7xl items-center justify-center">
           <Loading />
@@ -68,7 +65,7 @@ export default function CrearRestaurante() {
   return (
     <>
       <Head>
-        <title> Sabores Pasto - Crear Restaurante </title>
+        <title> Sabores Pasto - Crear Plato </title>
       </Head>
 
       {loadingModal && <LoadingModal title={loadingModal.title} />}
@@ -78,7 +75,7 @@ export default function CrearRestaurante() {
           <div className="space-y-12">
             <div className="border-b border-gray-900/10 pb-12">
               <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Crear restaurante
+                Crear plato
               </h2>
               <p className="mt-1 text-sm leading-6 text-gray-600">
                 Esta información será mostrada públicamente, así que ten cuidado
@@ -91,7 +88,7 @@ export default function CrearRestaurante() {
                     htmlFor="restaurant"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Nombre del restaurante
+                    Nombre del plato
                   </label>
                   <div className="mt-2">
                     <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
@@ -101,7 +98,7 @@ export default function CrearRestaurante() {
                         id="restaurant"
                         autoComplete="restaurant"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        placeholder="Burger King"
+                        placeholder="Whopper"
                         required
                         value={form.name}
                         onChange={(e) =>
@@ -110,37 +107,49 @@ export default function CrearRestaurante() {
                       />
                     </div>
                   </div>
-                </div>
-
+                </div>{" "}
                 <div className="sm:col-span-4">
                   <label
-                    htmlFor="slug"
+                    htmlFor="price"
                     className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    Slug
+                    Precio
                   </label>
-                  <div className="mt-2">
-                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                      <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">
-                        saborespasto.vercel.app/restaurantes/
-                      </span>
-                      <input
-                        type="text"
-                        name="slug"
-                        id="slug"
-                        autoComplete="slug"
-                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                        placeholder="burger-king"
-                        required
-                        value={form.slug}
-                        onChange={(e) =>
-                          setForm({ ...form, slug: e.target.value })
-                        }
-                      />
+                  <div className="relative mt-2 rounded-md shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                      <span className="text-gray-500 sm:text-sm">$</span>
+                    </div>
+                    <input
+                      type="text"
+                      name="price"
+                      id="price"
+                      className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      placeholder="23.900"
+                      required
+                      value={form.price.toLocaleString("es-CO")}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          price:
+                            parseInt(e.target.value.replace(/\D/g, "")) || 0,
+                        })
+                      }
+                    />
+                    <div className="absolute inset-y-0 right-0 flex items-center">
+                      <label htmlFor="currency" className="sr-only">
+                        Moneda
+                      </label>
+                      <select
+                        id="currency"
+                        name="currency"
+                        className="h-full rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                        disabled
+                      >
+                        <option>COP</option>
+                      </select>
                     </div>
                   </div>
                 </div>
-
                 <div className="col-span-full">
                   <label
                     htmlFor="description"
@@ -155,7 +164,7 @@ export default function CrearRestaurante() {
                       rows={3}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       defaultValue={""}
-                      placeholder="Burger King es una cadena de restaurantes de comida rápida estadounidense, especializada en hamburguesas."
+                      placeholder="Una hamburguesa de ternera a la parrilla, con tomate, lechuga fresca, mayonesa, pepinillos, un toque de ketchup y cebollas en rodajas en un panecillo suave con semillas de sésamo."
                       required
                       value={form.description}
                       onChange={(e) =>
@@ -164,62 +173,9 @@ export default function CrearRestaurante() {
                     />
                   </div>
                   <p className="mt-3 text-sm leading-6 text-gray-600">
-                    Escribe una breve descripción de tu restaurante.
+                    Escribe una breve descripción de tu plato.
                   </p>
                 </div>
-                <div className="col-span-full">
-                  <label
-                    htmlFor="street-address"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Direccion
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      type="text"
-                      name="street-address"
-                      id="street-address"
-                      autoComplete="street-address"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      placeholder="Calle 1 # 2 - 3"
-                      required
-                      value={form.address}
-                      onChange={(e) =>
-                        setForm({ ...form, address: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-4">
-                  <label
-                    htmlFor="phone"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Telefono
-                  </label>
-                  <div className="mt-2">
-                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                      <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm">
-                        +57
-                      </span>
-                      <input
-                        type="text"
-                        name="phone"
-                        id="phone"
-                        autoComplete="phone"
-                        className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                        placeholder="3100000001"
-                        required
-                        value={form.phone}
-                        onChange={(e) =>
-                          setForm({ ...form, phone: e.target.value })
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-
                 <div className="col-span-full">
                   <label
                     htmlFor="img"
@@ -242,7 +198,7 @@ export default function CrearRestaurante() {
                     />
                   </div>
                   <p className="mt-3 text-sm leading-6 text-gray-600">
-                    Escribe la url de la foto de tu restaurante, puedes usar el
+                    Escribe la url de la foto de tu plato, puedes usar el
                     servicio de{" "}
                     <a
                       href="https://es.imgbb.com/"
@@ -289,6 +245,12 @@ export default function CrearRestaurante() {
           </div>
 
           <div className="my-6 flex items-center justify-end gap-x-6">
+            <Link
+              href="/mi-restaurante"
+              className="text-sm font-semibold leading-6 text-gray-900"
+            >
+              Atras
+            </Link>
             <button
               type="submit"
               className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

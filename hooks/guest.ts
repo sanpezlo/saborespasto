@@ -9,9 +9,8 @@ export function useGuest() {
 
   useEffect(() => {
     if (isLoadingAccount) return;
-
     if (account) {
-      router.push("/");
+      router.replace("/");
       return;
     }
   }, [isLoadingAccount, account, router]);

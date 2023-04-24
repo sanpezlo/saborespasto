@@ -66,7 +66,7 @@ export default function CrearCuentaAdministrador() {
           refresh: false,
         });
 
-        router.push("/crear-restaurante");
+        router.replace("/crear-restaurante");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {

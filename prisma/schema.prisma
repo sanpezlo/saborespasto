@@ -37,4 +37,19 @@ model Restaurant {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
+  Dish        Dish[]
+}
+
+model Dish {
+  id           String     @id @default(uuid())
+  name         String
+  description  String
+  price        Float
+  new_price    Float?
+  image        String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
 }

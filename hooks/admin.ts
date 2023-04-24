@@ -3,20 +3,21 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export function useAdmin() {
-  const { account, isLoadingAccount } = useAuthContext();
+  const { account, isLoadingAccount, restaurant, isLoadingRestaurant } =
+    useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
     if (isLoadingAccount) return;
     if (!account) {
-      router.push("/iniciar-sesion");
+      router.replace("/iniciar-sesion");
       return;
     }
     if (!account.admin) {
-      router.push("404");
+      router.replace("404");
       return;
     }
   }, [account, router, isLoadingAccount]);
 
-  return { account, isLoadingAccount };
+  return { account, isLoadingAccount, restaurant, isLoadingRestaurant };
 }
