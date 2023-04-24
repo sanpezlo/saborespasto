@@ -10,7 +10,6 @@ import useSWR from "swr";
 import { Account, AccountSchema } from "@/types/Account";
 import { apiFetcherSWR } from "@/lib/fetcher";
 import { ErrorResponse } from "@/types/ErrorResponse";
-import { getCookies } from "cookies-next";
 
 type AuthenticationContext = {
   account?: Account;
@@ -38,6 +37,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     apiFetcherSWR({ schema: AccountSchema }),
     {
       revalidateOnFocus: false,
+      revalidateOnReconnect: false,
     }
   );
 
