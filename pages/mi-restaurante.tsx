@@ -6,18 +6,25 @@ import { useAdmin } from "@/hooks/admin";
 export default function MiRestaurante() {
   const { account, isLoadingAccount } = useAdmin();
 
+  if (isLoadingAccount)
+    return (
+      <>
+        <Head>
+          <title> Sabores Pasto - Mi Restaurante</title>
+        </Head>
+        <main className="mx-auto flex max-w-7xl items-center justify-center">
+          <Loading />
+        </main>
+      </>
+    );
+
   return (
     <>
       <Head>
         <title> Sabores Pasto - Mi Restaurante </title>
       </Head>
-      {isLoadingAccount ? (
-        <main className="mx-auto flex max-w-7xl items-center justify-center">
-          <Loading />
-        </main>
-      ) : (
-        <main className="mx-auto flex max-w-7xl items-center justify-center"></main>
-      )}
+
+      <main className="mx-auto flex max-w-7xl items-center justify-center"></main>
     </>
   );
 }
