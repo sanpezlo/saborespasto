@@ -3,8 +3,13 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export function useAdmin() {
-  const { account, isLoadingAccount, restaurant, isLoadingRestaurant } =
-    useAuthContext();
+  const {
+    account,
+    isLoadingAccount,
+    restaurant,
+    isLoadingRestaurant,
+    mutateRestaurant,
+  } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -19,5 +24,11 @@ export function useAdmin() {
     }
   }, [account, router, isLoadingAccount]);
 
-  return { account, isLoadingAccount, restaurant, isLoadingRestaurant };
+  return {
+    account,
+    isLoadingAccount,
+    restaurant,
+    isLoadingRestaurant,
+    mutateRestaurant,
+  };
 }

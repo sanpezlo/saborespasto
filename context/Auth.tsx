@@ -6,6 +6,7 @@ import {
   useContext,
 } from "react";
 import useSWR from "swr";
+import useSWRImmutable from "swr/immutable";
 
 import { Account, AccountSchema } from "@/types/Account";
 import { apiFetcherSWR } from "@/lib/fetcher";
@@ -18,6 +19,7 @@ type AuthenticationContext = {
   mutateAccount: Dispatch<SetStateAction<Account | undefined>>;
   restaurant?: Restaurant;
   isLoadingRestaurant: boolean;
+  mutateRestaurant?: Dispatch<SetStateAction<Restaurant | undefined>>;
 };
 
 const AuthContext = createContext<AuthenticationContext>({
@@ -26,6 +28,7 @@ const AuthContext = createContext<AuthenticationContext>({
   mutateAccount: () => {},
   restaurant: undefined,
   isLoadingRestaurant: true,
+  mutateRestaurant: () => {},
 });
 
 type AuthProviderProps = {
@@ -37,21 +40,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
     data: account,
     isLoading: isLoadingAccount,
     mutate: mutateAccount,
-  } = useSWR<Account, ErrorResponse>(
+  } = useSWRImmutable<Account, ErrorResponse>(
     "/accounts/self",
     apiFetcherSWR({ schema: AccountSchema }),
     {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
+      shouldRetryOnError: false,
     }
   );
 
-  const { data: restaurant, isLoading: isLoadingRestaurant } = useSWR<
-    Restaurant,
-    ErrorResponse
-  >(
+  const {
+    data: restaurant,
+    isLoading: isLoadingRestaurant,
+    mutate: mutateRestaurant,
+  } = useSWR<Restaurant, ErrorResponse>(
     () => (account && account.admin ? "/restaurants/self" : null),
-    apiFetcherSWR({ schema: RestaurantSchema })
+    apiFetcherSWR({ schema: RestaurantSchema }),
+    {
+      shouldRetryOnError: false,
+    }
   );
 
   return (
@@ -62,6 +68,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         mutateAccount,
         restaurant,
         isLoadingRestaurant,
+        mutateRestaurant,
       }}
     >
       {children}

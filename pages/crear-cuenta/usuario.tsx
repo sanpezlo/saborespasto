@@ -50,7 +50,6 @@ export default function CrearCuentaUsuario() {
           body: JSON.stringify(createAccount),
           schema: AccountSchema,
         });
-        mutateAccount(account);
 
         setLoadingModal({
           title: "Iniciando sesión...",
@@ -67,6 +66,7 @@ export default function CrearCuentaUsuario() {
         });
 
         router.replace("/");
+        mutateAccount(account);
       } catch (error) {
         handleErrorModal(error, setModalError);
       } finally {

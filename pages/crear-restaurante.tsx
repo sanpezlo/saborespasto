@@ -9,6 +9,7 @@ import Head from "next/head";
 import {
   CreateRestaurant,
   CreateRestaurantSchema,
+  Restaurant,
   RestaurantSchema,
 } from "@/types/Restaurant";
 import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
@@ -16,7 +17,7 @@ import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
 
 export default function CrearRestaurante() {
-  const { isLoadingAccount } = useAdmin();
+  const { isLoadingAccount, mutateRestaurant } = useAdmin();
   const router = useRouter();
 
   const [form, setForm] = useState<CreateRestaurant>({
@@ -38,11 +39,15 @@ export default function CrearRestaurante() {
       try {
         e.preventDefault();
         const createRestaurant = CreateRestaurantSchema.parse(form);
-        const { data } = await apiFetcher("/restaurants", {
-          method: "POST",
-          body: JSON.stringify(createRestaurant),
-          schema: RestaurantSchema,
-        });
+        const { data: restaurant } = await apiFetcher<Restaurant>(
+          "/restaurants",
+          {
+            method: "POST",
+            body: JSON.stringify(createRestaurant),
+            schema: RestaurantSchema,
+          }
+        );
+        if (mutateRestaurant !== undefined) mutateRestaurant(restaurant);
         router.replace("mi-restaurante");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
@@ -50,7 +55,7 @@ export default function CrearRestaurante() {
         setLoadingModal(null);
       }
     },
-    [form, router]
+    [form, router, mutateRestaurant]
   );
 
   if (isLoadingAccount)
@@ -154,7 +159,6 @@ export default function CrearRestaurante() {
                       name="description"
                       rows={3}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      defaultValue={""}
                       placeholder="Burger King es una cadena de restaurantes de comida rápida estadounidense, especializada en hamburguesas."
                       required
                       value={form.description}

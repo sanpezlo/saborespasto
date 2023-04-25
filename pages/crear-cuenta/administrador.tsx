@@ -50,7 +50,6 @@ export default function CrearCuentaAdministrador() {
           body: JSON.stringify(createAccount),
           schema: AccountSchema,
         });
-        mutateAccount(account);
 
         setLoadingModal({
           title: "Iniciando sesión...",
@@ -60,13 +59,14 @@ export default function CrearCuentaAdministrador() {
           email: createAccount.email,
           password: createAccount.password,
         };
-        await apiFetcher<AuthResponse>("/signin", {
+        const { data } = await apiFetcher<AuthResponse>("/signin", {
           method: "POST",
           body: JSON.stringify(signin),
           refresh: false,
         });
 
         router.replace("/crear-restaurante");
+        mutateAccount(account);
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {
