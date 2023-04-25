@@ -5,6 +5,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { useAuthContext } from "@/context/Auth";
 import Loading from "./loading";
+import Image from "next/image";
 
 export default function Header() {
   const { account, isLoadingAccount } = useAuthContext();
@@ -19,12 +20,13 @@ export default function Header() {
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Sabores Pasto</span>
-            {/* <img
+            <Image
               className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-              alt=""
-            /> */}
-            <div className="text-gray-900">SaboresPastoImg</div>
+              src="/saborespasto.svg"
+              alt="Sabores Pasto Logo"
+              width="262"
+              height="32"
+            />
           </Link>
         </div>
 
@@ -161,12 +163,13 @@ export default function Header() {
           <div className="flex items-center justify-between">
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">Sabores Pasto</span>
-              {/* <img
+              <Image
                 className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                alt=""
-              /> */}
-              <div className="text-gray-900">SaboresPastoImg</div>
+                src="/icon.svg"
+                alt="Sabores Pasto Icono"
+                width="54"
+                height="32"
+              />
             </a>
             <button
               type="button"
