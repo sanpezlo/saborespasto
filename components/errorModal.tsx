@@ -70,14 +70,12 @@ export default function ErrorModal({
                         {title}
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-gray-500">
-                          {description}
-                          <ul className="list-disc">
-                            {list.map((item, index) => (
-                              <li key={index}>{item}</li>
-                            ))}
-                          </ul>
-                        </p>
+                        <p className="text-sm text-gray-500">{description}</p>
+                        <ul className="list-disc text-sm text-gray-500">
+                          {list.map((item, index) => (
+                            <li key={index}>{item}</li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   </div>
