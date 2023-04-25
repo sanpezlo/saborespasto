@@ -9,6 +9,9 @@ export function useAdmin() {
     restaurant,
     isLoadingRestaurant,
     mutateRestaurant,
+    dishes,
+    isLoadingDishes,
+    mutateDishes,
   } = useAuthContext();
   const router = useRouter();
 
@@ -30,5 +33,8 @@ export function useAdmin() {
     restaurant,
     isLoadingRestaurant,
     mutateRestaurant,
+    dishes,
+    isLoadingDishes,
+    mutateDishes,
   };
 }

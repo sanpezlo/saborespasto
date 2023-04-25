@@ -4,14 +4,16 @@ export const DishSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  price: z.number().positive(),
-  new_price: z.number().positive().nullable(),
+  price: z.number().positive().nullable(),
+  new_price: z.number().positive(),
   image: z.string(),
   restaurantId: z.string(),
   createdAt: z.string().datetime().or(z.date()),
   updatedAt: z.string().datetime().or(z.date()),
   deletedAt: z.string().datetime().or(z.date()).nullable(),
 });
+
+export const DishesSchema = z.array(DishSchema);
 
 export const CreateDishSchema = z.object({
   name: z
@@ -36,7 +38,7 @@ export const CreateDishSchema = z.object({
     .max(280, {
       message: "La descripción debe tener máximo 280 caracteres",
     }),
-  price: z
+  new_price: z
     .number({
       required_error: "El precio es requerido",
       invalid_type_error: "El precio debe ser un número",
@@ -44,14 +46,6 @@ export const CreateDishSchema = z.object({
     .positive({
       message: "El precio debe ser un número positivo",
     }),
-  new_price: z
-    .number({
-      invalid_type_error: "El nuevo recio debe ser un número",
-    })
-    .positive({
-      message: "El nuevo precio debe ser un número positivo",
-    })
-    .nullable(),
   image: z
     .string({
       required_error: "La imagen es requerida",

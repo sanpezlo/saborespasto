@@ -12,6 +12,7 @@ import { Account, AccountSchema } from "@/types/Account";
 import { apiFetcherSWR } from "@/lib/fetcher";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { Restaurant, RestaurantSchema } from "@/types/Restaurant";
+import { Dish, DishSchema, DishesSchema } from "@/types/Dish";
 
 type AuthenticationContext = {
   account?: Account;
@@ -20,6 +21,9 @@ type AuthenticationContext = {
   restaurant?: Restaurant;
   isLoadingRestaurant: boolean;
   mutateRestaurant?: Dispatch<SetStateAction<Restaurant | undefined>>;
+  dishes?: Dish[];
+  isLoadingDishes: boolean;
+  mutateDishes?: Dispatch<SetStateAction<Dish[] | undefined>>;
 };
 
 const AuthContext = createContext<AuthenticationContext>({
@@ -29,6 +33,8 @@ const AuthContext = createContext<AuthenticationContext>({
   restaurant: undefined,
   isLoadingRestaurant: true,
   mutateRestaurant: () => {},
+  dishes: undefined,
+  isLoadingDishes: true,
 });
 
 type AuthProviderProps = {
@@ -60,6 +66,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   );
 
+  const {
+    data: dishes,
+    isLoading: isLoadingDishes,
+    mutate: mutateDishes,
+  } = useSWR<Dish[], ErrorResponse>(
+    () => (restaurant ? "/dishes/self" : null),
+    apiFetcherSWR({
+      schema: DishesSchema,
+    }),
+    {
+      shouldRetryOnError: false,
+    }
+  );
+
   return (
     <AuthContext.Provider
       value={{
@@ -69,6 +89,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         restaurant,
         isLoadingRestaurant,
         mutateRestaurant,
+        dishes,
+        isLoadingDishes,
+        mutateDishes,
       }}
     >
       {children}
