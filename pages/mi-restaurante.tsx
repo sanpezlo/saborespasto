@@ -66,8 +66,6 @@ export default function MiRestaurante() {
     isLoadingDishes,
   } = useAdmin();
 
-  console.log(dishes);
-
   if (isLoadingAccount || isLoadingRestaurant)
     return (
       <>

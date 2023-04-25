@@ -7,14 +7,14 @@ import { handleErrorModal } from "@/lib/error";
 import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
 import Head from "next/head";
 
-import { CreateDish, CreateDishSchema, DishSchema } from "@/types/Dish";
+import { CreateDish, CreateDishSchema, Dish, DishSchema } from "@/types/Dish";
 import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
 import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
 import Link from "next/link";
 
 export default function CrearRestaurante() {
-  const { isLoadingAccount } = useAdmin();
+  const { isLoadingAccount, mutateDishes } = useAdmin();
   const router = useRouter();
 
   const [form, setForm] = useState<CreateDish>({
@@ -34,11 +34,16 @@ export default function CrearRestaurante() {
       try {
         e.preventDefault();
         const createDish = CreateDishSchema.parse(form);
-        const { data } = await apiFetcher("/dishes", {
+        const { data: dish } = await apiFetcher<Dish>("/dishes", {
           method: "POST",
           body: JSON.stringify(createDish),
           schema: DishSchema,
         });
+        if (mutateDishes !== undefined)
+          mutateDishes((dishes) => {
+            if (dishes === undefined) return [dish];
+            return [dish, ...dishes];
+          });
         router.replace("/mi-restaurante");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
@@ -46,7 +51,7 @@ export default function CrearRestaurante() {
         setLoadingModal(null);
       }
     },
-    [form, router]
+    [form, router, mutateDishes]
   );
 
   if (isLoadingAccount)
