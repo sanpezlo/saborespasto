@@ -13,6 +13,7 @@ import { Dish } from "@/types/Dish";
 import { Product } from "@/hooks/shoppingCart";
 
 export interface QuickviewsModalProps {
+  isAuth: boolean;
   dish: Dish;
   cart: Product[];
   setCart: Dispatch<SetStateAction<Product[]>>;
@@ -20,6 +21,7 @@ export interface QuickviewsModalProps {
 }
 
 export default function QuickviewsModal({
+  isAuth,
   dish,
   cart,
   setCart,
@@ -154,39 +156,43 @@ export default function QuickviewsModal({
                           Opciones del plato
                         </h3>
 
-                        <form onSubmit={handleSubmit}>
-                          <div>
-                            <label
-                              htmlFor="quantity"
-                              className="block text-sm font-medium leading-6 text-gray-900"
-                            >
-                              Cantidad
-                            </label>
-                            <div className="mt-2">
-                              <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                                <input
-                                  type="number"
-                                  min={1}
-                                  step={1}
-                                  name="quantity"
-                                  id="quantity"
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                  required
-                                  value={quantity}
-                                  onChange={(e) =>
-                                    setQuantity(parseInt(e.target.value))
-                                  }
-                                />
+                        {isAuth ? (
+                          <form onSubmit={handleSubmit}>
+                            <div>
+                              <label
+                                htmlFor="quantity"
+                                className="block text-sm font-medium leading-6 text-gray-900"
+                              >
+                                Cantidad
+                              </label>
+                              <div className="mt-2">
+                                <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                                  <input
+                                    type="number"
+                                    min={1}
+                                    step={1}
+                                    name="quantity"
+                                    id="quantity"
+                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    required
+                                    value={quantity}
+                                    onChange={(e) =>
+                                      setQuantity(parseInt(e.target.value))
+                                    }
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <button
-                            type="submit"
-                            className="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                          >
-                            Agregar al carrito
-                          </button>
-                        </form>
+                            <button
+                              type="submit"
+                              className="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            >
+                              Agregar al carrito
+                            </button>
+                          </form>
+                        ) : (
+                          <></>
+                        )}
                       </section>
                     </div>
                   </div>

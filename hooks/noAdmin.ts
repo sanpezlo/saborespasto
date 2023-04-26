@@ -14,5 +14,5 @@ export function useNoAdmin({ redirectTo = "/404" }: { redirectTo?: string }) {
     }
   });
 
-  return { isLoadingAccount };
+  return { account, isLoadingAccount };
 }
