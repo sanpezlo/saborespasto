@@ -12,7 +12,7 @@ export default function Home() {
       <Head>
         <title> Sabores Pasto - Inicio </title>
       </Head>
-      <main></main>;
+      <main></main>
     </>
   );
 }

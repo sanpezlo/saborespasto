@@ -14,6 +14,7 @@ import ShoppingCart from "@/components/shoppingCart";
 
 import QuickviewsModal from "@/components/quickviewsModal";
 import { useState } from "react";
+import Notification, { NotificationProps } from "@/components/notification";
 
 export default function MiRestaurante() {
   const router = useRouter();
@@ -44,6 +45,9 @@ export default function MiRestaurante() {
 
   const { open, setOpen, cart, setCart } = useShoppingCart();
   const [dish, setDish] = useState<Dish | null>(null);
+  const [notification, setNotification] = useState<null | NotificationProps>(
+    null
+  );
 
   if (isLoadingAccount || isLoadingRestaurant)
     return (
@@ -225,6 +229,13 @@ export default function MiRestaurante() {
             </div>
           </button>
           <ShoppingCart open={open} setOpen={setOpen} cart={cart} />
+          {notification && (
+            <Notification
+              title={notification.title}
+              description={notification.description}
+              onClose={() => setNotification(null)}
+            />
+          )}
         </>
       ) : (
         <> </>
@@ -233,10 +244,15 @@ export default function MiRestaurante() {
         <QuickviewsModal
           isAuth={Boolean(account)}
           dish={dish}
-          cart={cart}
           setCart={setCart}
           onClose={() => {
             setDish(null);
+          }}
+          onSubmit={(product) => {
+            setNotification({
+              title: "Platillo agregado al carrito",
+              description: `${product.dish.name} - ${product.quantity}`,
+            });
           }}
         />
       ) : (
