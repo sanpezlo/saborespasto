@@ -22,6 +22,7 @@ model Account {
   updatedAt  DateTime    @updatedAt
   deletedAt  DateTime?
   restaurant Restaurant?
+  Order      Order[]
 }
 
 model Restaurant {
@@ -38,18 +39,49 @@ model Restaurant {
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
   Dish        Dish[]
+  Order       Order[]
 }
 
 model Dish {
-  id           String     @id @default(uuid())
-  name         String
-  description  String
-  price        Float?
-  new_price    Float
-  image        String
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-  restaurantId String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  deletedAt    DateTime?
+  id            String          @id @default(uuid())
+  name          String
+  description   String
+  price         Float?
+  new_price     Float
+  image         String
+  restaurant    Restaurant      @relation(fields: [restaurantId], references: [id])
+  restaurantId  String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+  DishesInOrder DishesInOrder[]
+}
+
+model Order {
+  id            String          @id @default(uuid())
+  name          String
+  address       String
+  phone         String
+  account       Account         @relation(fields: [accountId], references: [id])
+  accountId     String
+  restaurant    Restaurant      @relation(fields: [restaurantId], references: [id])
+  restaurantId  String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+  DishesInOrder DishesInOrder[]
+}
+
+model DishesInOrder {
+  id        String    @id @default(uuid())
+  quantity  Int
+  dish      Dish      @relation(fields: [dishId], references: [id])
+  dishId    String
+  order     Order     @relation(fields: [orderId], references: [id])
+  orderId   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@unique([dishId, orderId])
 }

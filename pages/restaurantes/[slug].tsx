@@ -15,6 +15,9 @@ import ShoppingCart from "@/components/shoppingCart";
 import QuickviewsModal from "@/components/quickviewsModal";
 import { useState } from "react";
 import Notification, { NotificationProps } from "@/components/notification";
+import OrderModal, { OrderModalProps } from "@/components/orderModal";
+import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
+import { handleErrorModal } from "@/lib/error";
 
 export default function MiRestaurante() {
   const router = useRouter();
@@ -48,6 +51,8 @@ export default function MiRestaurante() {
   const [notification, setNotification] = useState<null | NotificationProps>(
     null
   );
+  const [orderModal, setOrderModal] = useState<null | OrderModalProps>(null);
+  const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
 
   if (isLoadingAccount || isLoadingRestaurant)
     return (
@@ -210,7 +215,7 @@ export default function MiRestaurante() {
           </div>
         </div>
       </main>
-      {Boolean(account) ? (
+      {account ? (
         <>
           <button
             className="fixed bottom-0 right-0 z-10 w-auto p-4 bg-indigo-600 rounded-full m-6 shadow-xl hover:bg-indigo-700 outline-none hover:ring-2 hover:ring-offset-2 hover:ring-indigo-500"
@@ -228,12 +233,41 @@ export default function MiRestaurante() {
               </p>
             </div>
           </button>
-          <ShoppingCart open={open} setOpen={setOpen} cart={cart} />
+          <ShoppingCart
+            open={open}
+            setOpen={setOpen}
+            cart={cart}
+            onClick={() =>
+              setOrderModal({
+                account: account,
+                cart: cart,
+                restaurantId: restaurant?.id || "",
+              })
+            }
+          />
           {notification && (
             <Notification
               title={notification.title}
               description={notification.description}
               onClose={() => setNotification(null)}
+            />
+          )}
+          {orderModal && (
+            <OrderModal
+              account={orderModal.account}
+              cart={orderModal.cart}
+              restaurantId={orderModal.restaurantId}
+              onClose={() => setOrderModal(null)}
+              onError={(error) => {
+                handleErrorModal(error, setErrorModal);
+              }}
+              onSucess={() => {
+                setNotification({
+                  title: "Orden procesada",
+                  description: "Tu orden ha sido realizada con éxito",
+                });
+                setCart([]);
+              }}
             />
           )}
         </>
@@ -254,6 +288,16 @@ export default function MiRestaurante() {
               description: `${product.dish.name} - ${product.quantity}`,
             });
           }}
+        />
+      ) : (
+        <></>
+      )}
+      {errorModal ? (
+        <ErrorModal
+          title={errorModal?.title ?? ""}
+          description={errorModal?.description ?? ""}
+          list={errorModal?.list ?? []}
+          onClose={() => setErrorModal(null)}
         />
       ) : (
         <></>

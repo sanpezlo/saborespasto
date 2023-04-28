@@ -4,7 +4,7 @@ import { FormEvent, useCallback, useState } from "react";
 
 import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
-import ModalError, { ErrorModalProps } from "@/components/errorModal";
+import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
 import {
   Account,
   AccountSchema,
@@ -32,7 +32,7 @@ export default function CrearCuentaUsuario() {
     address: "",
     admin: false,
   });
-  const [errorModal, setModalError] = useState<ErrorModalProps | null>(null);
+  const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
   const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
     null
   );
@@ -68,7 +68,7 @@ export default function CrearCuentaUsuario() {
         router.replace("/");
         mutateAccount(account);
       } catch (error) {
-        handleErrorModal(error, setModalError);
+        handleErrorModal(error, setErrorModal);
       } finally {
         setLoadingModal(null);
       }
@@ -267,11 +267,11 @@ export default function CrearCuentaUsuario() {
       </main>
 
       {errorModal ? (
-        <ModalError
+        <ErrorModal
           title={errorModal?.title ?? ""}
           description={errorModal?.description ?? ""}
           list={errorModal?.list ?? []}
-          onClose={() => setModalError(null)}
+          onClose={() => setErrorModal(null)}
         />
       ) : (
         <></>

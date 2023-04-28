@@ -7,13 +7,20 @@ export interface ShoppingCartProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   cart: Product[];
+  onClick?: () => void;
 }
 
 export default function ShoppingCart({
   open,
   setOpen,
   cart,
+  onClick = () => {},
 }: ShoppingCartProps) {
+  const handleClick = () => {
+    onClick();
+    setOpen(false);
+  };
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={setOpen}>
@@ -67,7 +74,10 @@ export default function ShoppingCart({
                             className="-my-6 divide-y divide-gray-200"
                           >
                             {cart.map((product) => (
-                              <li key={product.dish.id} className="flex py-6">
+                              <li
+                                key={product.dish.id}
+                                className="flex flex-wrap py-6"
+                              >
                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                   <img
                                     src={product.dish.image}
@@ -78,7 +88,7 @@ export default function ShoppingCart({
 
                                 <div className="ml-4 flex flex-1 flex-col">
                                   <div>
-                                    <div className="flex justify-between text-base font-medium text-gray-900">
+                                    <div className="flex flex-wrap justify-between text-base font-medium text-gray-900">
                                       <h3>
                                         <a href={""}>{product.dish.name}</a>
                                       </h3>
@@ -116,21 +126,25 @@ export default function ShoppingCart({
                     </div>
 
                     <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-                      <div className="flex justify-between text-base font-medium text-gray-900">
-                        {/* <p>Subtotal</p>
-                        <p>$262.00</p> */}
-                      </div>
-                      <p className="mt-0.5 text-sm text-gray-500">
-                        Envío e impuestos calculados en el pago.
-                      </p>
-                      <div className="mt-6">
-                        <a
-                          href="#"
-                          className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
-                        >
-                          Pagar
-                        </a>
-                      </div>
+                      {cart.length > 0 && (
+                        <>
+                          <div className="flex justify-between text-base font-medium text-gray-900">
+                            {/* <p>Subtotal</p>
+                            <p>$262.00</p> */}
+                          </div>
+                          <p className="mt-0.5 text-sm text-gray-500">
+                            Envío e impuestos calculados en el pago.
+                          </p>
+                          <div className="mt-6">
+                            <button
+                              className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 w-full"
+                              onClick={handleClick}
+                            >
+                              Realizar pedido
+                            </button>
+                          </div>
+                        </>
+                      )}
                       <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                         <p>
                           <button

@@ -9,7 +9,7 @@ import { verify } from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET } from "@/lib/config";
 import { AccessPayload } from "@/types/AuthPayload";
 import { Account } from "@/types/Account";
-import { getCookie, getCookies, hasCookie } from "cookies-next";
+import { getCookie, hasCookie } from "cookies-next";
 
 export type ApiMethodHandlers = {
   [key in Uppercase<Method>]?: NextApiHandler;
