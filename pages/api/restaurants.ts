@@ -48,6 +48,20 @@ async function createRestaurant(
   res.status(201).json(restaurant);
 }
 
+async function getRestaurants(
+  req: NextApiRequest,
+  res: NextApiResponse<Restaurant[] | ErrorResponse>
+) {
+  const restaurants = await prisma.restaurant.findMany({
+    where: {
+      deletedAt: null,
+    },
+  });
+
+  res.status(200).json(restaurants);
+}
+
 export default apiHandler({
   POST: withAdmin(createRestaurant),
+  GET: getRestaurants,
 });

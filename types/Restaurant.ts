@@ -14,6 +14,8 @@ export const RestaurantSchema = z.object({
   deletedAt: z.string().datetime().or(z.date()).nullable(),
 });
 
+export const RestaurantsSchema = z.array(RestaurantSchema);
+
 export const CreateRestaurantSchema = z.object({
   name: z
     .string({
