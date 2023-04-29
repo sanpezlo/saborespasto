@@ -2,34 +2,42 @@ import createHttpError from "http-errors";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 
-import { Dish } from "@/types/Dish";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { apiHandler, withAdmin } from "@/lib/api";
 import { Account } from "@/types/Account";
+import { DishesInOrder } from "@/types/DishesInOrder";
 
 const prisma = new PrismaClient();
 
-async function getMyDishes(
+async function getMyDishesInOrder(
   req: NextApiRequest,
-  res: NextApiResponse<Dish[] | ErrorResponse>
+  res: NextApiResponse<DishesInOrder[] | ErrorResponse>
 ) {
   const account = JSON.parse(req.headers.account as string) as Account;
+  const { id } = req.query;
 
-  const dishes = await prisma.dish.findMany({
+  const dishes = await prisma.dishesInOrder.findMany({
     where: {
-      restaurant: {
-        adminId: account.id,
+      orderId: id as string,
+      order: {
+        restaurant: {
+          adminId: account.id,
+        },
       },
     },
+    include: {
+      dish: true,
+    },
   });
+
   if (!dishes)
     throw new createHttpError.BadRequest(
-      "El administrador no tiene un restaurante o no tiene platos registrados"
+      "El pedido no existe o no tiene platos registrados"
     );
 
   res.status(200).json(dishes);
 }
 
 export default apiHandler({
-  GET: withAdmin(getMyDishes),
+  GET: withAdmin(getMyDishesInOrder),
 });

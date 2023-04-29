@@ -5,12 +5,15 @@ export const OrderSchema = z.object({
   name: z.string(),
   address: z.string(),
   phone: z.string(),
+  status: z.string(),
   accountId: z.string(),
   restaurantId: z.string(),
   createdAt: z.string().datetime().or(z.date()),
   updatedAt: z.string().datetime().or(z.date()),
   deletedAt: z.string().datetime().or(z.date()).nullable(),
 });
+
+export const OrdersSchema = z.array(OrderSchema);
 
 export const CreateOrderSchema = z.object({
   name: z

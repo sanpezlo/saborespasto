@@ -12,7 +12,7 @@ import { Account, AccountSchema } from "@/types/Account";
 import { apiFetcherSWR } from "@/lib/fetcher";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { Restaurant, RestaurantSchema } from "@/types/Restaurant";
-import { Dish, DishSchema, DishesSchema } from "@/types/Dish";
+import { Dish, DishesSchema } from "@/types/Dish";
 
 type AuthenticationContext = {
   account?: Account;

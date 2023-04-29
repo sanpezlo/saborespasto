@@ -21,8 +21,15 @@ export default function Header() {
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Sabores Pasto</span>
             <Image
-              className="h-8 w-auto"
+              className="h-8 w-auto hidden sm:block"
               src="/saborespasto.svg"
+              alt="Sabores Pasto Logo"
+              width="262"
+              height="32"
+            />
+            <Image
+              className="h-8 w-auto sm:hidden"
+              src="/icon.svg"
               alt="Sabores Pasto Logo"
               width="262"
               height="32"
@@ -125,9 +132,15 @@ export default function Header() {
               <>
                 <Link
                   href="/mi-restaurante"
-                  className="text-sm font-semibold leading-6 text-gray-900"
+                  className="text-sm font-semibold leading-6 text-gray-900 mr-4"
                 >
                   Mi restaurant
+                </Link>
+                <Link
+                  href="/mi-restaurante/pedidos"
+                  className="text-sm font-semibold leading-6 text-gray-900"
+                >
+                  Pedidos
                 </Link>
               </>
             ) : (
@@ -176,7 +189,7 @@ export default function Header() {
               className="-m-2.5 rounded-md p-2.5 text-gray-700"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <span className="sr-only">Close menu</span>
+              <span className="sr-only">Cerrar menu</span>
               <XMarkIcon className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
@@ -236,7 +249,24 @@ export default function Header() {
                     <Loading />
                   </div>
                 ) : account ? (
-                  <></>
+                  account.admin ? (
+                    <>
+                      <Link
+                        href="/mi-restaurante"
+                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      >
+                        Mi restaurante
+                      </Link>
+                      <Link
+                        href="/mi-restaurante/pedidos"
+                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      >
+                        Pedidos
+                      </Link>
+                    </>
+                  ) : (
+                    <></>
+                  )
                 ) : (
                   <>
                     <Link
