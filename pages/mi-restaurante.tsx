@@ -6,7 +6,6 @@ import { useAdmin } from "@/hooks/admin";
 
 export default function MiRestaurante() {
   const { isLoadingAccount, restaurant, isLoadingRestaurant } = useAdmin();
-  console.log(restaurant);
 
   if (isLoadingAccount || isLoadingRestaurant)
     return (
