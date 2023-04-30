@@ -14,7 +14,7 @@ import { useAdmin } from "@/hooks/admin";
 import Link from "next/link";
 
 export default function CrearRestaurante() {
-  const { isLoadingAccount, mutateDishes } = useAdmin();
+  const { isLoadingAccount, mutateRestaurant } = useAdmin();
   const router = useRouter();
 
   const [form, setForm] = useState<CreateDish>({
@@ -39,10 +39,15 @@ export default function CrearRestaurante() {
           body: JSON.stringify(createDish),
           schema: DishSchema,
         });
-        if (mutateDishes !== undefined)
-          mutateDishes((dishes) => {
-            if (dishes === undefined) return [dish];
-            return [dish, ...dishes];
+        if (mutateRestaurant !== undefined)
+          mutateRestaurant((restaurant) => {
+            if (restaurant === undefined) return restaurant;
+            if (restaurant.Dish.length === 0)
+              return { ...restaurant, Dish: [dish] };
+            return {
+              ...restaurant,
+              dishes: [dish, ...restaurant.Dish],
+            };
           });
         router.replace("/mi-restaurante");
       } catch (error) {
@@ -51,7 +56,7 @@ export default function CrearRestaurante() {
         setLoadingModal(null);
       }
     },
-    [form, router, mutateDishes]
+    [form, router, mutateRestaurant]
   );
 
   if (isLoadingAccount)

@@ -11,19 +11,18 @@ import useSWRImmutable from "swr/immutable";
 import { Account, AccountSchema } from "@/types/Account";
 import { apiFetcherSWR } from "@/lib/fetcher";
 import { ErrorResponse } from "@/types/ErrorResponse";
-import { Restaurant, RestaurantSchema } from "@/types/Restaurant";
-import { Dish, DishesSchema } from "@/types/Dish";
+import {
+  RestaurantAndDishes,
+  RestaurantAndDishesSchema,
+} from "@/types/RestaurantAndDishes";
 
 type AuthenticationContext = {
   account?: Account;
   isLoadingAccount: boolean;
   mutateAccount: Dispatch<SetStateAction<Account | undefined>>;
-  restaurant?: Restaurant;
+  restaurant?: RestaurantAndDishes;
   isLoadingRestaurant: boolean;
-  mutateRestaurant?: Dispatch<SetStateAction<Restaurant | undefined>>;
-  dishes?: Dish[];
-  isLoadingDishes: boolean;
-  mutateDishes?: Dispatch<SetStateAction<Dish[] | undefined>>;
+  mutateRestaurant?: Dispatch<SetStateAction<RestaurantAndDishes | undefined>>;
 };
 
 const AuthContext = createContext<AuthenticationContext>({
@@ -32,9 +31,6 @@ const AuthContext = createContext<AuthenticationContext>({
   mutateAccount: () => {},
   restaurant: undefined,
   isLoadingRestaurant: true,
-  mutateRestaurant: () => {},
-  dishes: undefined,
-  isLoadingDishes: true,
 });
 
 type AuthProviderProps = {
@@ -58,23 +54,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     data: restaurant,
     isLoading: isLoadingRestaurant,
     mutate: mutateRestaurant,
-  } = useSWR<Restaurant, ErrorResponse>(
-    () => (account && account.admin ? "/restaurants/self" : null),
-    apiFetcherSWR({ schema: RestaurantSchema }),
-    {
-      shouldRetryOnError: false,
-    }
-  );
-
-  const {
-    data: dishes,
-    isLoading: isLoadingDishes,
-    mutate: mutateDishes,
-  } = useSWR<Dish[], ErrorResponse>(
-    () => (restaurant ? "/dishes/self" : null),
-    apiFetcherSWR({
-      schema: DishesSchema,
-    }),
+  } = useSWR<RestaurantAndDishes, ErrorResponse>(
+    () => (account && account.admin ? "/restaurants/dishes/self" : null),
+    apiFetcherSWR({ schema: RestaurantAndDishesSchema }),
     {
       shouldRetryOnError: false,
     }
@@ -89,9 +71,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         restaurant,
         isLoadingRestaurant,
         mutateRestaurant,
-        dishes,
-        isLoadingDishes,
-        mutateDishes,
       }}
     >
       {children}

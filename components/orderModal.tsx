@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  FormEvent,
-  Fragment,
-  SetStateAction,
-  useCallback,
-  useState,
-} from "react";
+import { FormEvent, Fragment, useCallback, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
 import { Product } from "@/hooks/shoppingCart";
@@ -62,7 +55,6 @@ export default function OrderModal({
         onSucess();
       } catch (error) {
         onError(error);
-        // handleErrorModal(error, setErrorModal);
       } finally {
         setLoadingModal(null);
         onClose();
