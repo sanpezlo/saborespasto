@@ -73,7 +73,9 @@ export default function Pedidos() {
                       })}
                     </time>
                     <div className="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600">
-                      {order.status}
+                      {order.status === "pending" && "Pendiente"}
+                      {order.status === "preparing" && "Preparando"}
+                      {order.status === "completed" && "Completado"}
                     </div>
                   </div>
                   <div className="relative">

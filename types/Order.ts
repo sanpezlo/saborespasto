@@ -84,5 +84,16 @@ export const CreateOrderSchema = z.object({
     }),
 });
 
+export const UpdateStatusOrderSchema = z.object({
+  status: z
+    .string({
+      required_error: "El estatus del pedido es requerido",
+      invalid_type_error: "El estatus del pedido debe ser una cadena de texto",
+    })
+    .nonempty({
+      message: "El estatus del pedido no puede estar vacío",
+    }),
+});
+
 export type Order = z.infer<typeof OrderSchema>;
 export type CreateOrder = z.infer<typeof CreateOrderSchema>;
