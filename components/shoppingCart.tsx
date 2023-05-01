@@ -7,14 +7,20 @@ export interface ShoppingCartProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   cart: Product[];
+  setCart: Dispatch<SetStateAction<Product[]>>;
   onClick?: () => void;
+  onEmpty?: () => void;
+  onRemove?: (product: Product) => void;
 }
 
 export default function ShoppingCart({
   open,
   setOpen,
   cart,
+  setCart,
   onClick = () => {},
+  onEmpty = () => {},
+  onRemove = () => {},
 }: ShoppingCartProps) {
   const handleClick = () => {
     onClick();
@@ -108,14 +114,43 @@ export default function ShoppingCart({
                                       Cantidad {product.quantity}
                                     </p>
 
-                                    {/* <div className="flex">
+                                    <div className="flex">
                                       <button
                                         type="button"
                                         className="font-medium text-indigo-600 hover:text-indigo-500"
+                                        onClick={() => {
+                                          onRemove(product);
+                                          if (
+                                            cart.length === 1 &&
+                                            cart[0].quantity === 1
+                                          ) {
+                                            setOpen(false);
+                                            onEmpty();
+                                          }
+                                          setCart((prev) => {
+                                            if (product.quantity === 1) {
+                                              return prev.filter(
+                                                (p) =>
+                                                  p.dish.id !== product.dish.id
+                                              );
+                                            }
+                                            return prev.map((p) => {
+                                              if (
+                                                p.dish.id === product.dish.id
+                                              ) {
+                                                return {
+                                                  ...p,
+                                                  quantity: p.quantity - 1,
+                                                };
+                                              }
+                                              return p;
+                                            });
+                                          });
+                                        }}
                                       >
                                         Eliminar
                                       </button>
-                                    </div> */}
+                                    </div>
                                   </div>
                                 </div>
                               </li>

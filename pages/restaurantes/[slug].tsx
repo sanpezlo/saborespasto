@@ -226,6 +226,7 @@ export default function MiRestaurante() {
             open={open}
             setOpen={setOpen}
             cart={cart}
+            setCart={setCart}
             onClick={() =>
               setOrderModal({
                 account: account,
@@ -233,6 +234,18 @@ export default function MiRestaurante() {
                 restaurantId: restaurant?.id || "",
               })
             }
+            onEmpty={() => {
+              setNotification({
+                title: "Carrito vacío",
+                description: "Has eliminado todos los platillos del carrito",
+              });
+            }}
+            onRemove={(product) => {
+              setNotification({
+                title: "Platillo eliminado del carrito",
+                description: `${product.dish.name}`,
+              });
+            }}
           />
           {notification && (
             <Notification
