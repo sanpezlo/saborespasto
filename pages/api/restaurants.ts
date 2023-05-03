@@ -6,12 +6,13 @@ import { CreateRestaurantSchema, Restaurant } from "@/types/Restaurant";
 import { apiHandler, withAdmin } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { Account } from "@/types/Account";
+import { RestaurantAndDishes } from "@/types/RestaurantAndDishes";
 
 const prisma = new PrismaClient();
 
 async function createRestaurant(
   req: NextApiRequest,
-  res: NextApiResponse<Restaurant | ErrorResponse>
+  res: NextApiResponse<RestaurantAndDishes | ErrorResponse>
 ) {
   const account = JSON.parse(req.headers.account as string) as Account;
   const createRestaurant = CreateRestaurantSchema.parse(req.body);
@@ -42,6 +43,9 @@ async function createRestaurant(
     data: {
       ...createRestaurant,
       adminId: account.id,
+    },
+    include: {
+      Dish: true,
     },
   });
 

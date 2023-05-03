@@ -6,15 +6,14 @@ import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
 import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
 import Head from "next/head";
-import {
-  CreateRestaurant,
-  CreateRestaurantSchema,
-  Restaurant,
-  RestaurantSchema,
-} from "@/types/Restaurant";
+import { CreateRestaurant, CreateRestaurantSchema } from "@/types/Restaurant";
 import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
 import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
+import {
+  RestaurantAndDishes,
+  RestaurantAndDishesSchema,
+} from "@/types/RestaurantAndDishes";
 
 export default function CrearRestaurante() {
   const { isLoadingAccount, mutateRestaurant } = useAdmin();
@@ -39,12 +38,12 @@ export default function CrearRestaurante() {
       try {
         e.preventDefault();
         const createRestaurant = CreateRestaurantSchema.parse(form);
-        const { data: restaurant } = await apiFetcher<Restaurant>(
+        const { data: restaurant } = await apiFetcher<RestaurantAndDishes>(
           "/restaurants",
           {
             method: "POST",
             body: JSON.stringify(createRestaurant),
-            schema: RestaurantSchema,
+            schema: RestaurantAndDishesSchema,
           }
         );
         if (mutateRestaurant !== undefined) mutateRestaurant(restaurant);
