@@ -1,18 +1,22 @@
 import Head from "next/head";
 import useSWR from "swr";
-import { ShoppingCartIcon } from "@heroicons/react/24/solid";
+import {
+  PhotoIcon,
+  ShoppingCartIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/solid";
 import { useShoppingCart } from "@/hooks/shoppingCart";
 
 import Loading from "@/components/loading";
 import { useNoAdmin } from "@/hooks/noAdmin";
 import { ErrorResponse } from "@/types/ErrorResponse";
-import { apiFetcherSWR } from "@/lib/fetcher";
+import { apiFetcher, apiFetcherSWR } from "@/lib/fetcher";
 import { useRouter } from "next/router";
 import { Dish } from "@/types/Dish";
 import ShoppingCart from "@/components/shoppingCart";
 
 import QuickviewsModal from "@/components/quickviewsModal";
-import { useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import Notification, { NotificationProps } from "@/components/notification";
 import OrderModal, { OrderModalProps } from "@/components/orderModal";
 import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
@@ -21,6 +25,13 @@ import {
   RestaurantAndDishes,
   RestaurantAndDishesSchema,
 } from "@/types/RestaurantAndDishes";
+import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
+import {
+  CreateRestaurantReview,
+  CreateRestaurantReviewSchema,
+  RestaurantReviewSchema,
+} from "@/types/RestaurantReview";
+import { StarIcon } from "@heroicons/react/20/solid";
 
 export default function MiRestaurante() {
   const router = useRouter();
@@ -47,6 +58,40 @@ export default function MiRestaurante() {
   );
   const [orderModal, setOrderModal] = useState<null | OrderModalProps>(null);
   const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
+  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
+    null
+  );
+  const [review, setReview] = useState<CreateRestaurantReview>({
+    comment: "",
+    rating: 0,
+    restaurantId: "",
+  });
+
+  const handleCreateRestaurantReview = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
+      setLoadingModal({ title: "Publicando comentario..." });
+      try {
+        const createRestaurantReview = CreateRestaurantReviewSchema.parse({
+          ...review,
+          restaurantId: restaurant?.id,
+        });
+
+        await apiFetcher("/restaurants/reviews", {
+          method: "POST",
+          body: JSON.stringify(createRestaurantReview),
+          schema: RestaurantReviewSchema,
+        });
+
+        setReview({ comment: "", rating: 0, restaurantId: "" });
+      } catch (error) {
+        handleErrorModal(error, setErrorModal);
+      } finally {
+        setLoadingModal(null);
+      }
+    },
+    [setErrorModal, setLoadingModal, restaurant, review]
+  );
 
   if (isLoadingAccount || isLoadingRestaurant)
     return (
@@ -65,6 +110,8 @@ export default function MiRestaurante() {
       <Head>
         <title> Sabores Pasto - Restaurante {restaurant?.name} </title>
       </Head>
+
+      {loadingModal && <LoadingModal title={loadingModal.title} />}
 
       <main>
         <div className="overflow-hidden bg-white pb-10">
@@ -93,10 +140,80 @@ export default function MiRestaurante() {
         </div>
         <div className="bg-white">
           <div className="mx-auto max-w-2xl px-4 pb-10 sm:px-6 lg:max-w-7xl lg:px-8">
+            <form onSubmit={handleCreateRestaurantReview}>
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+                  Reseñas
+                </h2>
+
+                <div className="mt-6">
+                  <h4 className="sr-only">Estrellas</h4>
+                  <div className="flex items-center">
+                    <div className="flex items-center">
+                      {[0, 1, 2, 3, 4].map((rating) => (
+                        <StarIcon
+                          key={rating}
+                          className={`${
+                            review.rating > rating
+                              ? "text-indigo-600"
+                              : "text-gray-200"
+                          } h-5 w-5 flex-shrink-0`}
+                          aria-hidden="true"
+                          onClick={() =>
+                            setReview((prev) => ({
+                              ...prev,
+                              rating: rating + 1,
+                            }))
+                          }
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                  <div className="col-span-full">
+                    <label
+                      htmlFor="about"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Tu reseña
+                    </label>
+                    <div className="mt-2">
+                      <textarea
+                        id="about"
+                        name="about"
+                        rows={3}
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        defaultValue={""}
+                        required
+                        onChange={(e) =>
+                          setReview({ ...review, comment: e.target.value })
+                        }
+                        value={review.comment}
+                      />
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-gray-600">
+                      Escriba una reseña detallada que brinde información sobre
+                      su experiencia con el restaurante.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex items-center justify-end gap-x-6">
+                <button
+                  type="submit"
+                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Publicar reseña
+                </button>
+              </div>
+            </form>
+
             <h2 className="text-2xl font-bold tracking-tight text-gray-900">
               Platos
             </h2>
-
             <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
               {restaurant?.Dish &&
                 restaurant.Dish.map((dish) => (

@@ -9,6 +9,7 @@ export const RestaurantSchema = z.object({
   phone: z.string(),
   image: z.string(),
   adminId: z.string(),
+  rating: z.number().min(0).max(5),
   createdAt: z.string().datetime().or(z.date()),
   updatedAt: z.string().datetime().or(z.date()),
   deletedAt: z.string().datetime().or(z.date()).nullable(),
