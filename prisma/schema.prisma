@@ -43,18 +43,19 @@ model Restaurant {
 }
 
 model Dish {
-  id            String          @id @default(uuid())
-  name          String
-  description   String
-  price         Float?
-  new_price     Float
-  image         String
-  restaurant    Restaurant      @relation(fields: [restaurantId], references: [id])
-  restaurantId  String
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  deletedAt     DateTime?
-  DishesInOrder DishesInOrder[]
+  id                 String               @id @default(uuid())
+  name               String
+  description        String
+  price              Float?
+  new_price          Float
+  image              String
+  restaurant         Restaurant           @relation(fields: [restaurantId], references: [id])
+  restaurantId       String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  deletedAt          DateTime?
+  DishesInOrder      DishesInOrder[]
+  CategoriesInDishes CategoriesInDishes[]
 }
 
 model Order {
@@ -85,4 +86,26 @@ model DishesInOrder {
   deletedAt DateTime?
 
   @@unique([dishId, orderId])
+}
+
+model Category {
+  id                 String               @id @default(uuid())
+  name               String               @unique
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  deletedAt          DateTime?
+  CategoriesInDishes CategoriesInDishes[]
+}
+
+model CategoriesInDishes {
+  id         String    @id @default(uuid())
+  category   Category  @relation(fields: [categoryId], references: [id])
+  categoryId String
+  dish       Dish      @relation(fields: [dishId], references: [id])
+  dishId     String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@unique([categoryId, dishId])
 }

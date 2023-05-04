@@ -25,7 +25,15 @@ async function getMyOrders(
     include: {
       DishesInOrder: {
         include: {
-          dish: true,
+          dish: {
+            include: {
+              CategoriesInDishes: {
+                include: {
+                  category: true,
+                },
+              },
+            },
+          },
         },
       },
     },

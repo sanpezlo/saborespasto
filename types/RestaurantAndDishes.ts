@@ -1,9 +1,10 @@
 import { z } from "zod";
+
 import { RestaurantSchema } from "@/types/Restaurant";
-import { DishesSchema } from "@/types/Dish";
+import { DishesAndCategoriesSchema } from "@/types/DishAndCategories";
 
 export const RestaurantAndDishesSchema = RestaurantSchema.extend({
-  Dish: DishesSchema,
+  Dish: DishesAndCategoriesSchema,
 });
 
 export type RestaurantAndDishes = z.infer<typeof RestaurantAndDishesSchema>;

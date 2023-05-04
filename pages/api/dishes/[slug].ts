@@ -4,19 +4,26 @@ import { PrismaClient } from "@prisma/client";
 
 import { apiHandler } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
-import { Dish } from "@/types/Dish";
+import { DishAndCategories } from "@/types/DishAndCategories";
 
 const prisma = new PrismaClient();
 
 async function getDishes(
   req: NextApiRequest,
-  res: NextApiResponse<Dish[] | ErrorResponse>
+  res: NextApiResponse<DishAndCategories[] | ErrorResponse>
 ) {
   const { slug } = req.query;
   const dishes = await prisma.dish.findMany({
     where: {
       restaurant: {
         slug: slug as string,
+      },
+    },
+    include: {
+      CategoriesInDishes: {
+        include: {
+          category: true,
+        },
       },
     },
   });

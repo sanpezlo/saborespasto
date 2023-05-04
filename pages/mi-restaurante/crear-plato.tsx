@@ -1,8 +1,9 @@
 import { useRouter } from "next/router";
+import useSWR from "swr";
 import { FormEvent, useCallback, useState } from "react";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 
-import { apiFetcher } from "@/lib/fetcher";
+import { apiFetcher, apiFetcherSWR } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
 import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
 import Head from "next/head";
@@ -12,6 +13,11 @@ import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
 import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
 import Link from "next/link";
+import { CategoriesSchema, Category } from "@/types/Category";
+import {
+  DishAndCategories,
+  DishAndCategoriesSchema,
+} from "@/types/DishAndCategories";
 
 export default function CrearRestaurante() {
   const { isLoadingAccount, mutateRestaurant } = useAdmin();
@@ -22,10 +28,27 @@ export default function CrearRestaurante() {
     description: "",
     new_price: 0,
     image: "",
+    categories: [],
   });
   const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
   const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
     null
+  );
+
+  const { data: categories, isLoading: isLoadingCategories } = useSWR<
+    Category[]
+  >(
+    "/categories",
+    apiFetcherSWR({
+      method: "GET",
+      schema: CategoriesSchema,
+    }),
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+      shouldRetryOnError: false,
+    }
   );
 
   const handleSubmit = useCallback(
@@ -34,10 +57,10 @@ export default function CrearRestaurante() {
       try {
         e.preventDefault();
         const createDish = CreateDishSchema.parse(form);
-        const { data: dish } = await apiFetcher<Dish>("/dishes", {
+        const { data: dish } = await apiFetcher<DishAndCategories>("/dishes", {
           method: "POST",
           body: JSON.stringify(createDish),
-          schema: DishSchema,
+          schema: DishAndCategoriesSchema,
         });
         if (mutateRestaurant !== undefined)
           mutateRestaurant((restaurant) => {
@@ -59,7 +82,7 @@ export default function CrearRestaurante() {
     [form, router, mutateRestaurant]
   );
 
-  if (isLoadingAccount)
+  if (isLoadingAccount || isLoadingCategories)
     return (
       <>
         <Head>
@@ -116,7 +139,7 @@ export default function CrearRestaurante() {
                       />
                     </div>
                   </div>
-                </div>{" "}
+                </div>
                 <div className="sm:col-span-4">
                   <label
                     htmlFor="price"
@@ -250,6 +273,64 @@ export default function CrearRestaurante() {
                   </p>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="border-b border-gray-900/10 pb-12">
+            <h2 className="text-base font-semibold leading-7 text-gray-900">
+              Categorias
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-gray-600">
+              Selecciona las categorias que mejor describan tu plato.
+            </p>
+
+            <div className="mt-10 space-y-4">
+              <fieldset>
+                <div className="space-y-2">
+                  {categories && categories.length > 0 ? (
+                    categories.map((category) => (
+                      <div className="relative flex gap-x-3" key={category.id}>
+                        <div className="flex h-6 items-center">
+                          <input
+                            id={category.id}
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                            checked={form.categories.includes(category.name)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setForm({
+                                  ...form,
+                                  categories: [
+                                    ...form.categories,
+                                    category.name,
+                                  ],
+                                });
+                              } else {
+                                setForm({
+                                  ...form,
+                                  categories: form.categories.filter(
+                                    (cat) => cat !== category.name
+                                  ),
+                                });
+                              }
+                            }}
+                          />
+                        </div>
+                        <div className="text-sm leading-6">
+                          <label
+                            htmlFor={category.id}
+                            className="font-medium text-gray-900"
+                          >
+                            {category.name}
+                          </label>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-600">No hay categorias</p>
+                  )}
+                </div>
+              </fieldset>
             </div>
           </div>
 

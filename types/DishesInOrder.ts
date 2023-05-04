@@ -1,11 +1,12 @@
 import { z } from "zod";
-import { DishSchema } from "./Dish";
+
+import { DishAndCategoriesSchema } from "@/types/DishAndCategories";
 
 export const DishesInOrderSchema = z.object({
   id: z.string(),
   quantity: z.number(),
   dishId: z.string(),
-  dish: DishSchema,
+  dish: DishAndCategoriesSchema,
   orderId: z.string(),
   createdAt: z.string().datetime().or(z.date()),
   updatedAt: z.string().datetime().or(z.date()),

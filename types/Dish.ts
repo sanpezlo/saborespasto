@@ -54,6 +54,17 @@ export const CreateDishSchema = z.object({
     .url({
       message: "La imagen debe ser una URL válida",
     }),
+  categories: z.array(
+    z.string({
+      required_error: "Las categorías son requeridas",
+      invalid_type_error: "Las categorías deben ser una cadena de texto",
+    }),
+    {
+      required_error: "Las categorías son requeridas",
+      invalid_type_error:
+        "Las categorías deben ser un arreglo de cadenas de texto",
+    }
+  ),
 });
 
 export type Dish = z.infer<typeof DishSchema>;

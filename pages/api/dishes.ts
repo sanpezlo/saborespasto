@@ -5,13 +5,14 @@ import { PrismaClient } from "@prisma/client";
 import { apiHandler, withAdmin } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { Account } from "@/types/Account";
-import { CreateDishSchema, Dish } from "@/types/Dish";
+import { CreateDishSchema } from "@/types/Dish";
+import { DishAndCategories } from "@/types/DishAndCategories";
 
 const prisma = new PrismaClient();
 
 async function createDish(
   req: NextApiRequest,
-  res: NextApiResponse<Dish | ErrorResponse>
+  res: NextApiResponse<DishAndCategories | ErrorResponse>
 ) {
   const account = JSON.parse(req.headers.account as string) as Account;
   const createDish = CreateDishSchema.parse(req.body);
@@ -29,12 +30,49 @@ async function createDish(
 
   const dish = await prisma.dish.create({
     data: {
-      ...createDish,
+      name: createDish.name,
+      description: createDish.description,
+      new_price: createDish.new_price,
+      image: createDish.image,
       restaurantId: restaurant.id,
     },
   });
 
-  res.status(201).json(dish);
+  createDish.categories.forEach(async (category) => {
+    const categoryExists = await prisma.category.findUnique({
+      where: {
+        name: category,
+      },
+    });
+
+    if (!categoryExists)
+      throw new createHttpError.BadRequest("Categoria no existe");
+
+    await prisma.categoriesInDishes.create({
+      data: {
+        categoryId: categoryExists.id,
+        dishId: dish.id,
+      },
+    });
+  });
+
+  const dishWithCategories = await prisma.dish.findUnique({
+    where: {
+      id: dish.id,
+    },
+    include: {
+      CategoriesInDishes: {
+        include: {
+          category: true,
+        },
+      },
+    },
+  });
+
+  if (!dishWithCategories)
+    throw new createHttpError.BadRequest("El plato no existe");
+
+  res.status(201).json(dishWithCategories);
 }
 
 export default apiHandler({

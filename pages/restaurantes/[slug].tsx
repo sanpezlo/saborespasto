@@ -5,11 +5,10 @@ import { useShoppingCart } from "@/hooks/shoppingCart";
 
 import Loading from "@/components/loading";
 import { useNoAdmin } from "@/hooks/noAdmin";
-import { Restaurant, RestaurantSchema } from "@/types/Restaurant";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { apiFetcherSWR } from "@/lib/fetcher";
 import { useRouter } from "next/router";
-import { Dish, DishesSchema } from "@/types/Dish";
+import { Dish } from "@/types/Dish";
 import ShoppingCart from "@/components/shoppingCart";
 
 import QuickviewsModal from "@/components/quickviewsModal";
@@ -114,7 +113,16 @@ export default function MiRestaurante() {
                         </div>
                       </div>
                     </div>
-
+                    <div className="flex mt-2 flex-wrap gap-2">
+                      {dish.CategoriesInDishes.map((categoryInDish) => (
+                        <div
+                          key={categoryInDish.id}
+                          className="text-xs rounded-full bg-gray-200 px-3 py-1.5 font-medium text-gray-600"
+                        >
+                          {categoryInDish.category.name}
+                        </div>
+                      ))}
+                    </div>
                     <div className="mt-4 flex justify-between">
                       <div>
                         <h3 className="text-sm text-gray-700">
@@ -213,7 +221,7 @@ export default function MiRestaurante() {
             <div className="flex items-center mx-auto">
               <p className="flex items-center text-sm font-normal text-white">
                 <ShoppingCartIcon className="w-7 h-7" />
-                <span className="sr-only">Shopping Cart</span>
+                <span className="sr-only">Carrito de compras</span>
                 {cart.length > 0 && (
                   <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10 fixed mb-11 ml-7">
                     {cart.length}

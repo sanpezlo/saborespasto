@@ -2,16 +2,16 @@ import createHttpError from "http-errors";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 
-import { Dish } from "@/types/Dish";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { apiHandler, withAdmin } from "@/lib/api";
 import { Account } from "@/types/Account";
+import { DishAndCategories } from "@/types/DishAndCategories";
 
 const prisma = new PrismaClient();
 
 async function getMyDishes(
   req: NextApiRequest,
-  res: NextApiResponse<Dish[] | ErrorResponse>
+  res: NextApiResponse<DishAndCategories[] | ErrorResponse>
 ) {
   const account = JSON.parse(req.headers.account as string) as Account;
 
@@ -19,6 +19,13 @@ async function getMyDishes(
     where: {
       restaurant: {
         adminId: account.id,
+      },
+    },
+    include: {
+      CategoriesInDishes: {
+        include: {
+          category: true,
+        },
       },
     },
   });

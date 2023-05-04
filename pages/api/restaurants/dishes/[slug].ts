@@ -18,7 +18,15 @@ async function getRestaurant(
       slug: slug as string,
     },
     include: {
-      Dish: true,
+      Dish: {
+        include: {
+          CategoriesInDishes: {
+            include: {
+              category: true,
+            },
+          },
+        },
+      },
     },
   });
 

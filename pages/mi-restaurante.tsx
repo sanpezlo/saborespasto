@@ -3,9 +3,29 @@ import Link from "next/link";
 
 import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
+import { useState } from "react";
+import EditDishModal from "@/components/editDishModal";
+import { DishAndCategories } from "@/types/DishAndCategories";
+import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
+import { handleErrorModal } from "@/lib/error";
+import Notification, { NotificationProps } from "@/components/notification";
+import { useSWRConfig } from "swr";
 
 export default function MiRestaurante() {
-  const { isLoadingAccount, restaurant, isLoadingRestaurant } = useAdmin();
+  const { mutate } = useSWRConfig();
+
+  const {
+    isLoadingAccount,
+    restaurant,
+    isLoadingRestaurant,
+    mutateRestaurant,
+  } = useAdmin();
+
+  const [dish, setDish] = useState<DishAndCategories | null>(null);
+  const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
+  const [notification, setNotification] = useState<null | NotificationProps>(
+    null
+  );
 
   if (isLoadingAccount || isLoadingRestaurant)
     return (
@@ -41,9 +61,15 @@ export default function MiRestaurante() {
                 </div>
                 <Link
                   href="/mi-restaurante/crear-plato"
-                  className="inline-block rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-center font-medium text-white hover:bg-indigo-700"
+                  className="inline-block rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-center font-medium text-white hover:bg-indigo-700 mb-2"
                 >
                   Crear Plato
+                </Link>
+                <Link
+                  href="/mi-restaurante/crear-categoria"
+                  className="inline-block rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-center font-medium text-white hover:bg-indigo-700"
+                >
+                  Crear Categoria
                 </Link>
               </div>
               <img
@@ -73,17 +99,26 @@ export default function MiRestaurante() {
                         className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                       />
                     </div>
+                    <div className="flex mt-2 flex-wrap gap-2">
+                      {dish.CategoriesInDishes.map((categoryInDish) => (
+                        <div
+                          key={categoryInDish.id}
+                          className="text-xs rounded-full bg-gray-200 px-3 py-1.5 font-medium text-gray-600"
+                        >
+                          {categoryInDish.category.name}
+                        </div>
+                      ))}
+                    </div>
                     <div className="mt-4 flex justify-between">
                       <div>
                         <h3 className="text-sm text-gray-700">
-                          <a href={"#"}>
-                            {/* TODO: Link to update dish page */}
+                          <button onClick={() => setDish(dish)}>
                             <span
                               aria-hidden="true"
                               className="absolute inset-0"
                             />
                             {dish.name}
-                          </a>
+                          </button>
                         </h3>
                         <p className="mt-1 text-sm text-gray-500">
                           {dish.description}
@@ -163,6 +198,45 @@ export default function MiRestaurante() {
           </div>
         </div>
       </main>
+      {dish ? (
+        <EditDishModal
+          dish={dish}
+          onClose={() => {
+            setDish(null);
+          }}
+          onError={(error) => {
+            handleErrorModal(error, setErrorModal);
+          }}
+          onSucess={() => {
+            setNotification({
+              title: "Plato editado",
+              description: "Tu plato ha sido editado exitosamente",
+            });
+            mutate("/restaurants/dishes/self");
+          }}
+        />
+      ) : (
+        <></>
+      )}
+
+      {notification && (
+        <Notification
+          title={notification.title}
+          description={notification.description}
+          onClose={() => setNotification(null)}
+        />
+      )}
+
+      {errorModal ? (
+        <ErrorModal
+          title={errorModal?.title ?? ""}
+          description={errorModal?.description ?? ""}
+          list={errorModal?.list ?? []}
+          onClose={() => setErrorModal(null)}
+        />
+      ) : (
+        <></>
+      )}
     </>
   );
 }

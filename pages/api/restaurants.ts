@@ -45,7 +45,15 @@ async function createRestaurant(
       adminId: account.id,
     },
     include: {
-      Dish: true,
+      Dish: {
+        include: {
+          CategoriesInDishes: {
+            include: {
+              category: true,
+            },
+          },
+        },
+      },
     },
   });
 

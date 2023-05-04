@@ -4,7 +4,7 @@ import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { useAuthContext } from "@/context/Auth";
-import Loading from "./loading";
+import Loading from "@/components/loading";
 import Image from "next/image";
 
 export default function Header() {

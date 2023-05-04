@@ -26,7 +26,15 @@ async function getMyDishesInOrder(
       },
     },
     include: {
-      dish: true,
+      dish: {
+        include: {
+          CategoriesInDishes: {
+            include: {
+              category: true,
+            },
+          },
+        },
+      },
     },
   });
 
