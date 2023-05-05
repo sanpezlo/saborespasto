@@ -24,6 +24,7 @@ model Account {
   restaurant       Restaurant?
   Order            Order[]
   RestaurantReview RestaurantReview[]
+  DishReview       DishReview[]
 }
 
 model Restaurant {
@@ -59,6 +60,8 @@ model Dish {
   deletedAt          DateTime?
   DishesInOrder      DishesInOrder[]
   CategoriesInDishes CategoriesInDishes[]
+  DishReview         DishReview[]
+  rating             Float                @default(0)
 }
 
 model Order {
@@ -124,4 +127,21 @@ model RestaurantReview {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   deletedAt    DateTime?
+
+  @@unique([accountId, restaurantId])
+}
+
+model DishReview {
+  id        String    @id @default(uuid())
+  comment   String
+  rating    Int
+  accountId String
+  account   Account   @relation(fields: [accountId], references: [id])
+  dishId    String
+  dish      Dish      @relation(fields: [dishId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@unique([accountId, dishId])
 }

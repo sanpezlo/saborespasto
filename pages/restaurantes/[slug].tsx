@@ -409,11 +409,20 @@ export default function MiRestaurante() {
           onClose={() => {
             setDish(null);
           }}
-          onSubmit={(product) => {
+          onShoppingCartSubmit={(product) => {
             setNotification({
               title: "Platillo agregado al carrito",
               description: `${product.dish.name} - ${product.quantity}`,
             });
+          }}
+          onReviewSubmit={() => {
+            setNotification({
+              title: "Reseña publicada",
+              description: "Tu reseña ha sido publicada con éxito",
+            });
+          }}
+          onError={(error) => {
+            handleErrorModal(error, setErrorModal);
           }}
         />
       ) : (

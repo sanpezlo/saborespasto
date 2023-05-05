@@ -8,6 +8,7 @@ export const DishSchema = z.object({
   new_price: z.number().positive(),
   image: z.string(),
   restaurantId: z.string(),
+  rating: z.number().min(0).max(5),
   createdAt: z.string().datetime().or(z.date()),
   updatedAt: z.string().datetime().or(z.date()),
   deletedAt: z.string().datetime().or(z.date()).nullable(),

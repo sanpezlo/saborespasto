@@ -33,6 +33,17 @@ async function createRestaurantReview(
     throw new createHttpError.NotFound("El restaurante no existe");
   }
 
+  const restaurantReviewExists = await prisma.restaurantReview.findFirst({
+    where: {
+      restaurantId: createRestaurantReview.restaurantId,
+      accountId: account.id,
+    },
+  });
+
+  if (restaurantReviewExists) {
+    throw new createHttpError.BadRequest("Ya has calificado este restaurante");
+  }
+
   const restaurantReview = await prisma.restaurantReview.create({
     data: {
       ...createRestaurantReview,
