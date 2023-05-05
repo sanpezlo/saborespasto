@@ -77,7 +77,7 @@ export default function MiRestaurante() {
           restaurantId: restaurant?.id,
         });
 
-        await apiFetcher("/restaurants/reviews", {
+        await apiFetcher("/reviews/restaurants", {
           method: "POST",
           body: JSON.stringify(createRestaurantReview),
           schema: RestaurantReviewSchema,
