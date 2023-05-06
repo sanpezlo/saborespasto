@@ -17,7 +17,9 @@ import {
   DishReviewSchema,
 } from "@/types/DishReview";
 import { apiFetcher } from "@/lib/fetcher";
-import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
+import LoadingModal, {
+  LoadingModalProps,
+} from "@/components/modals/loadingModal";
 
 export interface QuickviewsModalProps {
   isAuth: boolean;

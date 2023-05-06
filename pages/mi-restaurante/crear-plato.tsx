@@ -5,11 +5,13 @@ import { PhotoIcon } from "@heroicons/react/24/solid";
 
 import { apiFetcher, apiFetcherSWR } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
-import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
+import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import Head from "next/head";
 
 import { CreateDish, CreateDishSchema, Dish, DishSchema } from "@/types/Dish";
-import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
+import LoadingModal, {
+  LoadingModalProps,
+} from "@/components/modals/loadingModal";
 import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
 import Link from "next/link";

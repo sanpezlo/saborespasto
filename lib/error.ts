@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { ZodError } from "zod";
 
 import { ErrorResponse, ErrorResponseSchema } from "@/types/ErrorResponse";
-import { ErrorModalProps } from "@/components/errorModal";
+import { ErrorModalProps } from "@/components/modals/errorModal";
 
 export function parseErrorResponse(e: unknown): ErrorResponse {
   const parsed = ErrorResponseSchema.safeParse(e);

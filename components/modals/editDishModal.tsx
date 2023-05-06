@@ -9,7 +9,9 @@ import { apiFetcher, apiFetcherSWR } from "@/lib/fetcher";
 import { DishAndCategories } from "@/types/DishAndCategories";
 import { CreateCategoriesInDishesSchema } from "@/types/CategoriesInDishes";
 import Loading from "@/components/loading";
-import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
+import LoadingModal, {
+  LoadingModalProps,
+} from "@/components/modals/loadingModal";
 
 export interface EditDishModalProps {
   dish: DishAndCategories;

@@ -4,7 +4,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 
 import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
-import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
+import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import {
   Account,
   AccountSchema,
@@ -14,7 +14,9 @@ import {
 import Head from "next/head";
 import { useAuthContext } from "@/context/Auth";
 import { AuthResponse } from "@/types/AuthResponse";
-import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
+import LoadingModal, {
+  LoadingModalProps,
+} from "@/components/modals/loadingModal";
 import { Signin } from "@/types/Signin";
 import Loading from "@/components/loading";
 import { useGuest } from "@/hooks/guest";

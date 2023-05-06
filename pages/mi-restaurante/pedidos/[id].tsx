@@ -9,7 +9,9 @@ import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
 import { OrderAndDishes, OrderAndDishesSchema } from "@/types/OrderAndDishes";
 import { UpdateStatusOrderSchema } from "@/types/Order";
-import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
+import LoadingModal, {
+  LoadingModalProps,
+} from "@/components/modals/loadingModal";
 
 export default function Pedido() {
   const router = useRouter();

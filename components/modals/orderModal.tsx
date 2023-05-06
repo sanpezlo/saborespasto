@@ -5,7 +5,9 @@ import { Product } from "@/hooks/shoppingCart";
 import { Account } from "@/types/Account";
 import { CreateOrderSchema, Order, OrderSchema } from "@/types/Order";
 import { apiFetcher } from "@/lib/fetcher";
-import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
+import LoadingModal, {
+  LoadingModalProps,
+} from "@/components/modals/loadingModal";
 
 export interface OrderModalProps {
   account: Account;

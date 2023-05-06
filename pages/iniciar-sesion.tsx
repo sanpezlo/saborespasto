@@ -3,11 +3,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormEvent, useCallback, useState } from "react";
 
-import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
+import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import { Signin, SigninSchema } from "@/types/Signin";
 import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
-import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
+import LoadingModal, {
+  LoadingModalProps,
+} from "@/components/modals/loadingModal";
 import { useSWRConfig } from "swr";
 import Loading from "@/components/loading";
 import { useGuest } from "@/hooks/guest";

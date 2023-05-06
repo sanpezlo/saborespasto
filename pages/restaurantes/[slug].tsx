@@ -15,17 +15,19 @@ import { useRouter } from "next/router";
 import { Dish } from "@/types/Dish";
 import ShoppingCart from "@/components/shoppingCart";
 
-import QuickviewsModal from "@/components/quickviewsModal";
+import QuickviewsModal from "@/components/modals/quickviewsModal";
 import { FormEvent, useCallback, useState } from "react";
 import Notification, { NotificationProps } from "@/components/notification";
-import OrderModal, { OrderModalProps } from "@/components/orderModal";
-import ErrorModal, { ErrorModalProps } from "@/components/errorModal";
+import OrderModal, { OrderModalProps } from "@/components/modals/orderModal";
+import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import { handleErrorModal } from "@/lib/error";
 import {
   RestaurantAndDishes,
   RestaurantAndDishesSchema,
 } from "@/types/RestaurantAndDishes";
-import LoadingModal, { LoadingModalProps } from "@/components/loadingModal";
+import LoadingModal, {
+  LoadingModalProps,
+} from "@/components/modals/loadingModal";
 import {
   CreateRestaurantReview,
   CreateRestaurantReviewSchema,
