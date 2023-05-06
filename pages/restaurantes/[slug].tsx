@@ -1,10 +1,6 @@
 import Head from "next/head";
 import useSWR from "swr";
-import {
-  PhotoIcon,
-  ShoppingCartIcon,
-  UserCircleIcon,
-} from "@heroicons/react/24/solid";
+import { ShoppingCartIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { useShoppingCart } from "@/hooks/shoppingCart";
 
 import Loading from "@/components/loading";
@@ -25,9 +21,6 @@ import {
   RestaurantAndDishes,
   RestaurantAndDishesSchema,
 } from "@/types/RestaurantAndDishes";
-import LoadingModal, {
-  LoadingModalProps,
-} from "@/components/modals/loadingModal";
 import {
   CreateRestaurantReview,
   CreateRestaurantReviewSchema,
@@ -38,6 +31,7 @@ import {
   RestaurantReviewAndAccount,
   RestaurantReviewsAndAccountSchema,
 } from "@/types/RestaurantReviewAndAccount";
+import { useLoadingContext } from "@/context/Loading";
 
 export default function MiRestaurante() {
   const router = useRouter();
@@ -78,8 +72,6 @@ export default function MiRestaurante() {
     }
   );
 
-  console.log(reviews);
-
   const { open, setOpen, cart, setCart } = useShoppingCart();
   const [dish, setDish] = useState<Dish | null>(null);
   const [notification, setNotification] = useState<null | NotificationProps>(
@@ -87,9 +79,8 @@ export default function MiRestaurante() {
   );
   const [orderModal, setOrderModal] = useState<null | OrderModalProps>(null);
   const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
-  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
-    null
-  );
+  const { setLoadingModal } = useLoadingContext();
+
   const [review, setReview] = useState<CreateRestaurantReview>({
     comment: "",
     rating: 0,
@@ -139,8 +130,6 @@ export default function MiRestaurante() {
       <Head>
         <title> Sabores Pasto - Restaurante {restaurant?.name} </title>
       </Head>
-
-      {loadingModal && <LoadingModal title={loadingModal.title} />}
 
       <main>
         <div className="overflow-hidden bg-white pb-10">

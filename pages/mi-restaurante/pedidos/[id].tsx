@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 
@@ -9,9 +9,7 @@ import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
 import { OrderAndDishes, OrderAndDishesSchema } from "@/types/OrderAndDishes";
 import { UpdateStatusOrderSchema } from "@/types/Order";
-import LoadingModal, {
-  LoadingModalProps,
-} from "@/components/modals/loadingModal";
+import { useLoadingContext } from "@/context/Loading";
 
 export default function Pedido() {
   const router = useRouter();
@@ -19,9 +17,7 @@ export default function Pedido() {
 
   const { isLoadingAccount } = useAdmin();
 
-  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
-    null
-  );
+  const { setLoadingModal } = useLoadingContext();
 
   const {
     data: order,
@@ -35,28 +31,31 @@ export default function Pedido() {
     }
   );
 
-  const handleClick = async (status: string) => {
-    setLoadingModal({ title: "Cambiado estado..." });
+  const handleClick = useCallback(
+    async (status: string) => {
+      setLoadingModal({ title: "Cambiado estado..." });
 
-    const updateStatusOrder = UpdateStatusOrderSchema.parse({
-      status,
-    });
-    await apiFetcher<{ update: true }>(`/orders/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(updateStatusOrder),
-    });
+      const updateStatusOrder = UpdateStatusOrderSchema.parse({
+        status,
+      });
+      await apiFetcher<{ update: true }>(`/orders/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(updateStatusOrder),
+      });
 
-    await mutateOrder((prevOrder) => {
-      if (prevOrder)
-        return {
-          ...prevOrder,
-          status,
-        };
-    });
+      await mutateOrder((prevOrder) => {
+        if (prevOrder)
+          return {
+            ...prevOrder,
+            status,
+          };
+      });
 
-    router.back();
-    setLoadingModal(null);
-  };
+      router.back();
+      setLoadingModal(null);
+    },
+    [setLoadingModal, id, mutateOrder, router]
+  );
 
   if (isLoadingAccount || isLoadingOrder)
     return (
@@ -72,7 +71,6 @@ export default function Pedido() {
 
   return (
     <>
-      {loadingModal && <LoadingModal title={loadingModal.title} />}
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="px-4 sm:px-0">
           <h3 className="text-base font-semibold leading-7 text-gray-900">

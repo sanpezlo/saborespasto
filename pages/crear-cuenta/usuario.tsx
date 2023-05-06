@@ -13,13 +13,11 @@ import {
 } from "@/types/Account";
 import Head from "next/head";
 import { AuthResponse } from "@/types/AuthResponse";
-import LoadingModal, {
-  LoadingModalProps,
-} from "@/components/modals/loadingModal";
 import { Signin } from "@/types/Signin";
 import Loading from "@/components/loading";
 import { useGuest } from "@/hooks/guest";
 import { useAuthContext } from "@/context/Auth";
+import { useLoadingContext } from "@/context/Loading";
 
 export default function CrearCuentaUsuario() {
   const router = useRouter();
@@ -35,9 +33,7 @@ export default function CrearCuentaUsuario() {
     admin: false,
   });
   const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
-  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
-    null
-  );
+  const { setLoadingModal } = useLoadingContext();
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
@@ -75,7 +71,7 @@ export default function CrearCuentaUsuario() {
         setLoadingModal(null);
       }
     },
-    [form, mutateAccount, router]
+    [form, mutateAccount, router, setLoadingModal]
   );
 
   if (isLoadingAccount)
@@ -95,8 +91,6 @@ export default function CrearCuentaUsuario() {
       <Head>
         <title> Sabores Pasto - Crear Cuenta Usuario </title>
       </Head>
-
-      {loadingModal && <LoadingModal title={loadingModal.title} />}
 
       <main className="mx-auto flex max-w-7xl items-center justify-center">
         <form className="bg-white " onSubmit={handleSubmit}>

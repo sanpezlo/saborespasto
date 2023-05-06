@@ -9,9 +9,6 @@ import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import Head from "next/head";
 
 import { CreateDish, CreateDishSchema, Dish, DishSchema } from "@/types/Dish";
-import LoadingModal, {
-  LoadingModalProps,
-} from "@/components/modals/loadingModal";
 import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
 import Link from "next/link";
@@ -20,6 +17,7 @@ import {
   DishAndCategories,
   DishAndCategoriesSchema,
 } from "@/types/DishAndCategories";
+import { useLoadingContext } from "@/context/Loading";
 
 export default function CrearRestaurante() {
   const { isLoadingAccount, mutateRestaurant } = useAdmin();
@@ -33,9 +31,7 @@ export default function CrearRestaurante() {
     categories: [],
   });
   const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
-  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
-    null
-  );
+  const { setLoadingModal } = useLoadingContext();
 
   const { data: categories, isLoading: isLoadingCategories } = useSWR<
     Category[]
@@ -81,7 +77,7 @@ export default function CrearRestaurante() {
         setLoadingModal(null);
       }
     },
-    [form, router, mutateRestaurant]
+    [form, router, mutateRestaurant, setLoadingModal]
   );
 
   if (isLoadingAccount || isLoadingCategories)
@@ -101,8 +97,6 @@ export default function CrearRestaurante() {
       <Head>
         <title> Sabores Pasto - Crear Plato </title>
       </Head>
-
-      {loadingModal && <LoadingModal title={loadingModal.title} />}
 
       <main className="mx-auto flex max-w-7xl items-center justify-center">
         <form className="bg-white " onSubmit={handleSubmit}>

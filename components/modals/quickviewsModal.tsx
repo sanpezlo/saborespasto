@@ -17,9 +17,7 @@ import {
   DishReviewSchema,
 } from "@/types/DishReview";
 import { apiFetcher } from "@/lib/fetcher";
-import LoadingModal, {
-  LoadingModalProps,
-} from "@/components/modals/loadingModal";
+import { useLoadingContext } from "@/context/Loading";
 
 export interface QuickviewsModalProps {
   isAuth: boolean;
@@ -42,9 +40,8 @@ export default function QuickviewsModal({
 }: QuickviewsModalProps) {
   const [open, setOpen] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
-    null
-  );
+
+  const { setLoadingModal } = useLoadingContext();
 
   const handleShoppingCartSubmit = useCallback(
     async (e: FormEvent) => {
@@ -91,12 +88,11 @@ export default function QuickviewsModal({
         setLoadingModal(null);
       }
     },
-    [review, dish, onReviewSubmit, onError]
+    [review, dish, onReviewSubmit, onError, setLoadingModal]
   );
 
   return (
     <>
-      {loadingModal && <LoadingModal title={loadingModal.title} />}
       <Transition.Root show={open} as={Fragment}>
         <Dialog
           as="div"

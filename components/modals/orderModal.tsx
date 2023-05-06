@@ -5,9 +5,7 @@ import { Product } from "@/hooks/shoppingCart";
 import { Account } from "@/types/Account";
 import { CreateOrderSchema, Order, OrderSchema } from "@/types/Order";
 import { apiFetcher } from "@/lib/fetcher";
-import LoadingModal, {
-  LoadingModalProps,
-} from "@/components/modals/loadingModal";
+import { useLoadingContext } from "@/context/Loading";
 
 export interface OrderModalProps {
   account: Account;
@@ -28,9 +26,7 @@ export default function OrderModal({
 }: OrderModalProps) {
   const [open, setOpen] = useState(true);
   const [form, setForm] = useState<Account>(account);
-  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
-    null
-  );
+  const { setLoadingModal } = useLoadingContext();
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
@@ -63,12 +59,11 @@ export default function OrderModal({
         onClose();
       }
     },
-    [form, restaurantId, cart, onClose, onError, onSucess]
+    [form, restaurantId, cart, onClose, onError, onSucess, setLoadingModal]
   );
 
   return (
     <>
-      {loadingModal && <LoadingModal title={loadingModal.title} />}
       <Transition.Root show={open} as={Fragment}>
         <Dialog
           as="div"

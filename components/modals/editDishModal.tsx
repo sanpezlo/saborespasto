@@ -9,9 +9,7 @@ import { apiFetcher, apiFetcherSWR } from "@/lib/fetcher";
 import { DishAndCategories } from "@/types/DishAndCategories";
 import { CreateCategoriesInDishesSchema } from "@/types/CategoriesInDishes";
 import Loading from "@/components/loading";
-import LoadingModal, {
-  LoadingModalProps,
-} from "@/components/modals/loadingModal";
+import { useLoadingContext } from "@/context/Loading";
 
 export interface EditDishModalProps {
   dish: DishAndCategories;
@@ -30,9 +28,8 @@ export default function EditDishModal({
 }: EditDishModalProps) {
   const [open, setOpen] = useState(true);
   const [newCategories, setNewCategories] = useState<string[]>([]);
-  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
-    null
-  );
+
+  const { setLoadingModal } = useLoadingContext();
 
   const { data: categories, isLoading: isLoadingCategories } = useSWR<
     Category[]
@@ -77,12 +74,19 @@ export default function EditDishModal({
         onClose();
       }
     },
-    [dish.id, newCategories, onClose, onSubmit, onError, onSucess]
+    [
+      dish.id,
+      newCategories,
+      onClose,
+      onSubmit,
+      onError,
+      onSucess,
+      setLoadingModal,
+    ]
   );
 
   return (
     <>
-      {loadingModal && <LoadingModal title={loadingModal.title} />}
       <Transition.Root show={open} as={Fragment}>
         <Dialog
           as="div"

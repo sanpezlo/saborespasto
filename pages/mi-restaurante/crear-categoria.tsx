@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import { FormEvent, useCallback, useState } from "react";
 
 import { apiFetcher, apiFetcherSWR } from "@/lib/fetcher";
@@ -7,9 +7,6 @@ import { handleErrorModal } from "@/lib/error";
 import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import Head from "next/head";
 
-import LoadingModal, {
-  LoadingModalProps,
-} from "@/components/modals/loadingModal";
 import Loading from "@/components/loading";
 import { useAdmin } from "@/hooks/admin";
 import Link from "next/link";
@@ -20,8 +17,10 @@ import {
   CreateCategory,
   CreateCategorySchema,
 } from "@/types/Category";
+import { useLoadingContext } from "@/context/Loading";
 
 export default function CrearRestaurante() {
+  const { mutate } = useSWRConfig();
   const { isLoadingAccount } = useAdmin();
   const router = useRouter();
 
@@ -29,9 +28,7 @@ export default function CrearRestaurante() {
     name: "",
   });
   const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
-  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
-    null
-  );
+  const { setLoadingModal } = useLoadingContext();
 
   const { data: categories, isLoading: isLoadingCategories } = useSWR<
     Category[]
@@ -55,6 +52,8 @@ export default function CrearRestaurante() {
           schema: CategorySchema,
         });
 
+        mutate("/categories");
+
         router.replace("/mi-restaurante");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
@@ -62,7 +61,7 @@ export default function CrearRestaurante() {
         setLoadingModal(null);
       }
     },
-    [form, router]
+    [form, router, setLoadingModal, mutate]
   );
 
   if (isLoadingAccount || isLoadingCategories)
@@ -82,8 +81,6 @@ export default function CrearRestaurante() {
       <Head>
         <title> Sabores Pasto - Crear Categoria </title>
       </Head>
-
-      {loadingModal && <LoadingModal title={loadingModal.title} />}
 
       <main className="mx-auto flex max-w-7xl items-center justify-center">
         <form className="bg-white " onSubmit={handleSubmit}>

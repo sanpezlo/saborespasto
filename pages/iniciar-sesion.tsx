@@ -7,13 +7,11 @@ import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import { Signin, SigninSchema } from "@/types/Signin";
 import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
-import LoadingModal, {
-  LoadingModalProps,
-} from "@/components/modals/loadingModal";
 import { useSWRConfig } from "swr";
 import Loading from "@/components/loading";
 import { useGuest } from "@/hooks/guest";
 import Image from "next/image";
+import { useLoadingContext } from "@/context/Loading";
 
 export default function IniciarSesion() {
   const router = useRouter();
@@ -25,9 +23,7 @@ export default function IniciarSesion() {
     password: "",
   });
   const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
-  const [loadingModal, setLoadingModal] = useState<LoadingModalProps | null>(
-    null
-  );
+  const { setLoadingModal } = useLoadingContext();
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
@@ -53,7 +49,7 @@ export default function IniciarSesion() {
         setLoadingModal(null);
       }
     },
-    [form, router, mutate]
+    [form, router, mutate, setLoadingModal]
   );
 
   if (isLoadingAccount)
@@ -73,8 +69,6 @@ export default function IniciarSesion() {
       <Head>
         <title> Sabores Pasto - Iniciar Sesion</title>
       </Head>
-
-      {loadingModal && <LoadingModal title={loadingModal.title} />}
 
       <main className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">

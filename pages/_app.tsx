@@ -4,6 +4,7 @@ import Head from "next/head";
 import "@/styles/globals.css";
 import Header from "@/components/header";
 import { AuthProvider } from "@/context/Auth";
+import { LoadingProvider } from "@/context/Loading";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -32,8 +33,10 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="theme-color" content="#ffffff" />
       </Head>
       <AuthProvider>
-        <Header />
-        <Component {...pageProps} />
+        <LoadingProvider>
+          <Header />
+          <Component {...pageProps} />
+        </LoadingProvider>
       </AuthProvider>
     </>
   );
