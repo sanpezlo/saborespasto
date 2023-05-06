@@ -18,6 +18,8 @@ import {
 } from "@/types/DishReview";
 import { apiFetcher } from "@/lib/fetcher";
 import { useLoadingContext } from "@/context/Loading";
+import { useErrorContext } from "@/context/Error";
+import { handleErrorModal } from "@/lib/error";
 
 export interface QuickviewsModalProps {
   isAuth: boolean;
@@ -26,7 +28,6 @@ export interface QuickviewsModalProps {
   onShoppingCartSubmit?: (product: Product) => void;
   onReviewSubmit?: (review: CreateDishReview) => void;
   onClose?: () => void;
-  onError?: (error: unknown) => void;
 }
 
 export default function QuickviewsModal({
@@ -36,12 +37,12 @@ export default function QuickviewsModal({
   onShoppingCartSubmit = () => {},
   onReviewSubmit = () => {},
   onClose = () => {},
-  onError = () => {},
 }: QuickviewsModalProps) {
   const [open, setOpen] = useState(true);
   const [quantity, setQuantity] = useState(1);
 
   const { setLoadingModal } = useLoadingContext();
+  const { setErrorModal } = useErrorContext();
 
   const handleShoppingCartSubmit = useCallback(
     async (e: FormEvent) => {
@@ -83,12 +84,12 @@ export default function QuickviewsModal({
         setReview({ comment: "", rating: 0, dishId: dish.id });
         onReviewSubmit(createDishReview);
       } catch (error) {
-        onError(error);
+        handleErrorModal(error, setErrorModal);
       } finally {
         setLoadingModal(null);
       }
     },
-    [review, dish, onReviewSubmit, onError, setLoadingModal]
+    [review, dish, onReviewSubmit, setLoadingModal, setErrorModal]
   );
 
   return (

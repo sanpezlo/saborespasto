@@ -15,7 +15,6 @@ import QuickviewsModal from "@/components/modals/quickviewsModal";
 import { FormEvent, useCallback, useState } from "react";
 import Notification, { NotificationProps } from "@/components/notification";
 import OrderModal, { OrderModalProps } from "@/components/modals/orderModal";
-import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import { handleErrorModal } from "@/lib/error";
 import {
   RestaurantAndDishes,
@@ -32,6 +31,7 @@ import {
   RestaurantReviewsAndAccountSchema,
 } from "@/types/RestaurantReviewAndAccount";
 import { useLoadingContext } from "@/context/Loading";
+import { useErrorContext } from "@/context/Error";
 
 export default function MiRestaurante() {
   const router = useRouter();
@@ -78,8 +78,9 @@ export default function MiRestaurante() {
     null
   );
   const [orderModal, setOrderModal] = useState<null | OrderModalProps>(null);
-  const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
+
   const { setLoadingModal } = useLoadingContext();
+  const { setErrorModal } = useErrorContext();
 
   const [review, setReview] = useState<CreateRestaurantReview>({
     comment: "",
@@ -496,9 +497,6 @@ export default function MiRestaurante() {
               cart={orderModal.cart}
               restaurantId={orderModal.restaurantId}
               onClose={() => setOrderModal(null)}
-              onError={(error) => {
-                handleErrorModal(error, setErrorModal);
-              }}
               onSucess={() => {
                 setNotification({
                   title: "Orden procesada",
@@ -532,19 +530,6 @@ export default function MiRestaurante() {
               description: "Tu reseña ha sido publicada con éxito",
             });
           }}
-          onError={(error) => {
-            handleErrorModal(error, setErrorModal);
-          }}
-        />
-      ) : (
-        <></>
-      )}
-      {errorModal ? (
-        <ErrorModal
-          title={errorModal?.title ?? ""}
-          description={errorModal?.description ?? ""}
-          list={errorModal?.list ?? []}
-          onClose={() => setErrorModal(null)}
         />
       ) : (
         <></>

@@ -4,7 +4,6 @@ import { FormEvent, useCallback, useState } from "react";
 
 import { apiFetcher, apiFetcherSWR } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
-import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import Head from "next/head";
 
 import Loading from "@/components/loading";
@@ -18,6 +17,7 @@ import {
   CreateCategorySchema,
 } from "@/types/Category";
 import { useLoadingContext } from "@/context/Loading";
+import { useErrorContext } from "@/context/Error";
 
 export default function CrearRestaurante() {
   const { mutate } = useSWRConfig();
@@ -27,8 +27,9 @@ export default function CrearRestaurante() {
   const [form, setForm] = useState<CreateCategory>({
     name: "",
   });
-  const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
+
   const { setLoadingModal } = useLoadingContext();
+  const { setErrorModal } = useErrorContext();
 
   const { data: categories, isLoading: isLoadingCategories } = useSWR<
     Category[]
@@ -61,7 +62,7 @@ export default function CrearRestaurante() {
         setLoadingModal(null);
       }
     },
-    [form, router, setLoadingModal, mutate]
+    [form, router, setLoadingModal, mutate, setErrorModal]
   );
 
   if (isLoadingAccount || isLoadingCategories)
@@ -150,17 +151,6 @@ export default function CrearRestaurante() {
           </div>
         </form>
       </main>
-
-      {errorModal ? (
-        <ErrorModal
-          title={errorModal?.title ?? ""}
-          description={errorModal?.description ?? ""}
-          list={errorModal?.list ?? []}
-          onClose={() => setErrorModal(null)}
-        />
-      ) : (
-        <></>
-      )}
     </>
   );
 }

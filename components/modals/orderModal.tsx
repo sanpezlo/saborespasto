@@ -6,12 +6,13 @@ import { Account } from "@/types/Account";
 import { CreateOrderSchema, Order, OrderSchema } from "@/types/Order";
 import { apiFetcher } from "@/lib/fetcher";
 import { useLoadingContext } from "@/context/Loading";
+import { useErrorContext } from "@/context/Error";
+import { handleErrorModal } from "@/lib/error";
 
 export interface OrderModalProps {
   account: Account;
   cart: Product[];
   restaurantId: string;
-  onError?: (error: unknown) => void;
   onClose?: () => void;
   onSucess?: () => void;
 }
@@ -20,13 +21,14 @@ export default function OrderModal({
   account,
   cart,
   restaurantId,
-  onError = () => {},
   onClose = () => {},
   onSucess = () => {},
 }: OrderModalProps) {
   const [open, setOpen] = useState(true);
   const [form, setForm] = useState<Account>(account);
+
   const { setLoadingModal } = useLoadingContext();
+  const { setErrorModal } = useErrorContext();
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
@@ -52,14 +54,22 @@ export default function OrderModal({
 
         onSucess();
       } catch (error) {
-        onError(error);
+        handleErrorModal(error, setErrorModal);
       } finally {
         setLoadingModal(null);
         setOpen(false);
         onClose();
       }
     },
-    [form, restaurantId, cart, onClose, onError, onSucess, setLoadingModal]
+    [
+      setLoadingModal,
+      form,
+      restaurantId,
+      cart,
+      onSucess,
+      setErrorModal,
+      onClose,
+    ]
   );
 
   return (

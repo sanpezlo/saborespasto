@@ -6,23 +6,15 @@ import { useAdmin } from "@/hooks/admin";
 import { useState } from "react";
 import EditDishModal from "@/components/modals/editDishModal";
 import { DishAndCategories } from "@/types/DishAndCategories";
-import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
-import { handleErrorModal } from "@/lib/error";
 import Notification, { NotificationProps } from "@/components/notification";
 import { useSWRConfig } from "swr";
 
 export default function MiRestaurante() {
   const { mutate } = useSWRConfig();
 
-  const {
-    isLoadingAccount,
-    restaurant,
-    isLoadingRestaurant,
-    mutateRestaurant,
-  } = useAdmin();
+  const { isLoadingAccount, restaurant, isLoadingRestaurant } = useAdmin();
 
   const [dish, setDish] = useState<DishAndCategories | null>(null);
-  const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
   const [notification, setNotification] = useState<null | NotificationProps>(
     null
   );
@@ -204,9 +196,6 @@ export default function MiRestaurante() {
           onClose={() => {
             setDish(null);
           }}
-          onError={(error) => {
-            handleErrorModal(error, setErrorModal);
-          }}
           onSucess={() => {
             setNotification({
               title: "Plato editado",
@@ -225,17 +214,6 @@ export default function MiRestaurante() {
           description={notification.description}
           onClose={() => setNotification(null)}
         />
-      )}
-
-      {errorModal ? (
-        <ErrorModal
-          title={errorModal?.title ?? ""}
-          description={errorModal?.description ?? ""}
-          list={errorModal?.list ?? []}
-          onClose={() => setErrorModal(null)}
-        />
-      ) : (
-        <></>
       )}
     </>
   );

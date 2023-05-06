@@ -5,6 +5,7 @@ import "@/styles/globals.css";
 import Header from "@/components/header";
 import { AuthProvider } from "@/context/Auth";
 import { LoadingProvider } from "@/context/Loading";
+import { ErrorProvider } from "@/context/Error";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -34,8 +35,10 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <AuthProvider>
         <LoadingProvider>
-          <Header />
-          <Component {...pageProps} />
+          <ErrorProvider>
+            <Header />
+            <Component {...pageProps} />
+          </ErrorProvider>
         </LoadingProvider>
       </AuthProvider>
     </>

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FormEvent, useCallback, useState } from "react";
 
-import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import { Signin, SigninSchema } from "@/types/Signin";
 import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
@@ -12,6 +11,7 @@ import Loading from "@/components/loading";
 import { useGuest } from "@/hooks/guest";
 import Image from "next/image";
 import { useLoadingContext } from "@/context/Loading";
+import { useErrorContext } from "@/context/Error";
 
 export default function IniciarSesion() {
   const router = useRouter();
@@ -22,7 +22,8 @@ export default function IniciarSesion() {
     email: "",
     password: "",
   });
-  const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
+
+  const { setErrorModal } = useErrorContext();
   const { setLoadingModal } = useLoadingContext();
 
   const handleSubmit = useCallback(
@@ -49,7 +50,7 @@ export default function IniciarSesion() {
         setLoadingModal(null);
       }
     },
-    [form, router, mutate, setLoadingModal]
+    [form, router, mutate, setLoadingModal, setErrorModal]
   );
 
   if (isLoadingAccount)
@@ -165,17 +166,6 @@ export default function IniciarSesion() {
           </p>
         </div>
       </main>
-
-      {errorModal ? (
-        <ErrorModal
-          title={errorModal?.title ?? ""}
-          description={errorModal?.description ?? ""}
-          list={errorModal?.list ?? []}
-          onClose={() => setErrorModal(null)}
-        />
-      ) : (
-        <></>
-      )}
     </>
   );
 }

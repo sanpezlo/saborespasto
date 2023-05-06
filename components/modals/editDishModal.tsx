@@ -10,12 +10,13 @@ import { DishAndCategories } from "@/types/DishAndCategories";
 import { CreateCategoriesInDishesSchema } from "@/types/CategoriesInDishes";
 import Loading from "@/components/loading";
 import { useLoadingContext } from "@/context/Loading";
+import { handleErrorModal } from "@/lib/error";
+import { useErrorContext } from "@/context/Error";
 
 export interface EditDishModalProps {
   dish: DishAndCategories;
   onClose?: () => void;
   onSubmit?: () => void;
-  onError?: (error: unknown) => void;
   onSucess?: () => void;
 }
 
@@ -23,13 +24,13 @@ export default function EditDishModal({
   dish,
   onClose = () => {},
   onSubmit = () => {},
-  onError = () => {},
   onSucess = () => {},
 }: EditDishModalProps) {
   const [open, setOpen] = useState(true);
   const [newCategories, setNewCategories] = useState<string[]>([]);
 
   const { setLoadingModal } = useLoadingContext();
+  const { setErrorModal } = useErrorContext();
 
   const { data: categories, isLoading: isLoadingCategories } = useSWR<
     Category[]
@@ -67,7 +68,7 @@ export default function EditDishModal({
 
         onSucess();
       } catch (error) {
-        onError(error);
+        handleErrorModal(error, setErrorModal);
       } finally {
         setLoadingModal(null);
         setOpen(false);
@@ -79,9 +80,9 @@ export default function EditDishModal({
       newCategories,
       onClose,
       onSubmit,
-      onError,
       onSucess,
       setLoadingModal,
+      setErrorModal,
     ]
   );
 

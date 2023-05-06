@@ -12,7 +12,6 @@ async function getRestaurantReviews(
   req: NextApiRequest,
   res: NextApiResponse<RestaurantReviewAndAccount[] | ErrorResponse>
 ) {
-  console.log("a");
   const { slug } = req.query;
 
   const reviews = await prisma.restaurantReview.findMany({

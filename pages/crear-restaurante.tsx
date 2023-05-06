@@ -4,7 +4,6 @@ import { PhotoIcon } from "@heroicons/react/24/solid";
 
 import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
-import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import Head from "next/head";
 import { CreateRestaurant, CreateRestaurantSchema } from "@/types/Restaurant";
 import Loading from "@/components/loading";
@@ -14,6 +13,7 @@ import {
   RestaurantAndDishesSchema,
 } from "@/types/RestaurantAndDishes";
 import { useLoadingContext } from "@/context/Loading";
+import { useErrorContext } from "@/context/Error";
 
 export default function CrearRestaurante() {
   const { isLoadingAccount, mutateRestaurant } = useAdmin();
@@ -27,7 +27,8 @@ export default function CrearRestaurante() {
     image: "",
     slug: "",
   });
-  const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
+
+  const { setErrorModal } = useErrorContext();
 
   const { setLoadingModal } = useLoadingContext();
 
@@ -53,7 +54,7 @@ export default function CrearRestaurante() {
         setLoadingModal(null);
       }
     },
-    [form, router, mutateRestaurant, setLoadingModal]
+    [form, router, mutateRestaurant, setLoadingModal, setErrorModal]
   );
 
   if (isLoadingAccount)
@@ -298,17 +299,6 @@ export default function CrearRestaurante() {
           </div>
         </form>
       </main>
-
-      {errorModal ? (
-        <ErrorModal
-          title={errorModal?.title ?? ""}
-          description={errorModal?.description ?? ""}
-          list={errorModal?.list ?? []}
-          onClose={() => setErrorModal(null)}
-        />
-      ) : (
-        <></>
-      )}
     </>
   );
 }

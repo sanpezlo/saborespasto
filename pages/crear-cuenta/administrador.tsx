@@ -4,7 +4,6 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 
 import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
-import ErrorModal, { ErrorModalProps } from "@/components/modals/errorModal";
 import {
   Account,
   AccountSchema,
@@ -18,6 +17,7 @@ import { Signin } from "@/types/Signin";
 import Loading from "@/components/loading";
 import { useGuest } from "@/hooks/guest";
 import { useLoadingContext } from "@/context/Loading";
+import { useErrorContext } from "@/context/Error";
 
 export default function CrearCuentaAdministrador() {
   const router = useRouter();
@@ -32,8 +32,9 @@ export default function CrearCuentaAdministrador() {
     address: null,
     admin: true,
   });
-  const [errorModal, setErrorModal] = useState<ErrorModalProps | null>(null);
+
   const { setLoadingModal } = useLoadingContext();
+  const { setErrorModal } = useErrorContext();
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
@@ -71,7 +72,7 @@ export default function CrearCuentaAdministrador() {
         setLoadingModal(null);
       }
     },
-    [form, mutateAccount, router, setLoadingModal]
+    [form, mutateAccount, router, setLoadingModal, setErrorModal]
   );
 
   if (isLoadingAccount)
@@ -209,17 +210,6 @@ export default function CrearCuentaAdministrador() {
           </div>
         </form>
       </main>
-
-      {errorModal ? (
-        <ErrorModal
-          title={errorModal?.title ?? ""}
-          description={errorModal?.description ?? ""}
-          list={errorModal?.list ?? []}
-          onClose={() => setErrorModal(null)}
-        />
-      ) : (
-        <></>
-      )}
     </>
   );
 }
