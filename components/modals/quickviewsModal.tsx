@@ -20,13 +20,12 @@ import { apiFetcher } from "@/lib/fetcher";
 import { useLoadingContext } from "@/context/Loading";
 import { useErrorContext } from "@/context/Error";
 import { handleErrorModal } from "@/lib/error";
+import { useNotificationContext } from "@/context/Notification";
 
 export interface QuickviewsModalProps {
   isAuth: boolean;
   dish: Dish;
   setCart: Dispatch<SetStateAction<Product[]>>;
-  onShoppingCartSubmit?: (product: Product) => void;
-  onReviewSubmit?: (review: CreateDishReview) => void;
   onClose?: () => void;
 }
 
@@ -34,8 +33,6 @@ export default function QuickviewsModal({
   isAuth,
   dish,
   setCart,
-  onShoppingCartSubmit = () => {},
-  onReviewSubmit = () => {},
   onClose = () => {},
 }: QuickviewsModalProps) {
   const [open, setOpen] = useState(true);
@@ -43,6 +40,7 @@ export default function QuickviewsModal({
 
   const { setLoadingModal } = useLoadingContext();
   const { setErrorModal } = useErrorContext();
+  const { setNotification } = useNotificationContext();
 
   const handleShoppingCartSubmit = useCallback(
     async (e: FormEvent) => {
@@ -55,11 +53,14 @@ export default function QuickviewsModal({
         }
         return [...prev, { dish, quantity }];
       });
-      onShoppingCartSubmit({ dish, quantity });
+      setNotification({
+        title: "Platillo agregado al carrito",
+        description: `${dish.name} - ${quantity}`,
+      });
       onClose();
       setOpen(false);
     },
-    [quantity, dish, setCart, onClose, onShoppingCartSubmit]
+    [setCart, setNotification, dish, quantity, onClose]
   );
 
   const [review, setReview] = useState<CreateDishReview>({
@@ -82,14 +83,18 @@ export default function QuickviewsModal({
         });
 
         setReview({ comment: "", rating: 0, dishId: dish.id });
-        onReviewSubmit(createDishReview);
+
+        setNotification({
+          title: "Reseña publicada",
+          description: "Tu reseña ha sido publicada con éxito",
+        });
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {
         setLoadingModal(null);
       }
     },
-    [review, dish, onReviewSubmit, setLoadingModal, setErrorModal]
+    [setLoadingModal, review, dish.id, setNotification, setErrorModal]
   );
 
   return (

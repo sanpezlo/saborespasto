@@ -1,5 +1,5 @@
 import { FormEvent, Fragment, useCallback, useState } from "react";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/20/solid";
@@ -12,25 +12,24 @@ import Loading from "@/components/loading";
 import { useLoadingContext } from "@/context/Loading";
 import { handleErrorModal } from "@/lib/error";
 import { useErrorContext } from "@/context/Error";
+import { useNotificationContext } from "@/context/Notification";
 
 export interface EditDishModalProps {
   dish: DishAndCategories;
   onClose?: () => void;
-  onSubmit?: () => void;
-  onSucess?: () => void;
 }
 
 export default function EditDishModal({
   dish,
   onClose = () => {},
-  onSubmit = () => {},
-  onSucess = () => {},
 }: EditDishModalProps) {
+  const { mutate } = useSWRConfig();
   const [open, setOpen] = useState(true);
   const [newCategories, setNewCategories] = useState<string[]>([]);
 
   const { setLoadingModal } = useLoadingContext();
   const { setErrorModal } = useErrorContext();
+  const { setNotification } = useNotificationContext();
 
   const { data: categories, isLoading: isLoadingCategories } = useSWR<
     Category[]
@@ -55,7 +54,6 @@ export default function EditDishModal({
         title: "Asignando categorias...",
       });
       try {
-        onSubmit();
         const CreateCategoriesInDishes = CreateCategoriesInDishesSchema.parse({
           categories: newCategories,
           dishId: dish.id,
@@ -66,7 +64,11 @@ export default function EditDishModal({
           body: JSON.stringify(CreateCategoriesInDishes),
         });
 
-        onSucess();
+        setNotification({
+          title: "Plato editado",
+          description: "Tu plato ha sido editado exitosamente",
+        });
+        mutate("/restaurants/dishes/self");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {
@@ -76,13 +78,13 @@ export default function EditDishModal({
       }
     },
     [
-      dish.id,
-      newCategories,
-      onClose,
-      onSubmit,
-      onSucess,
       setLoadingModal,
+      newCategories,
+      dish.id,
+      setNotification,
+      mutate,
       setErrorModal,
+      onClose,
     ]
   );
 

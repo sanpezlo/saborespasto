@@ -1,7 +1,8 @@
-import { Dispatch, Fragment, SetStateAction } from "react";
+import { Dispatch, Fragment, SetStateAction, useCallback } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Product } from "@/hooks/shoppingCart";
+import { useNotificationContext } from "@/context/Notification";
 
 export interface ShoppingCartProps {
   open: boolean;
@@ -9,8 +10,6 @@ export interface ShoppingCartProps {
   cart: Product[];
   setCart: Dispatch<SetStateAction<Product[]>>;
   onClick?: () => void;
-  onEmpty?: () => void;
-  onRemove?: (product: Product) => void;
 }
 
 export default function ShoppingCart({
@@ -19,13 +18,13 @@ export default function ShoppingCart({
   cart,
   setCart,
   onClick = () => {},
-  onEmpty = () => {},
-  onRemove = () => {},
 }: ShoppingCartProps) {
-  const handleClick = () => {
+  const { setNotification } = useNotificationContext();
+
+  const handleClick = useCallback(() => {
     onClick();
     setOpen(false);
-  };
+  }, [onClick, setOpen]);
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -119,13 +118,22 @@ export default function ShoppingCart({
                                         type="button"
                                         className="font-medium text-indigo-600 hover:text-indigo-500"
                                         onClick={() => {
-                                          onRemove(product);
+                                          setNotification({
+                                            title:
+                                              "Platillo eliminado del carrito",
+                                            description: `${product.dish.name}`,
+                                          });
+
                                           if (
                                             cart.length === 1 &&
                                             cart[0].quantity === 1
                                           ) {
                                             setOpen(false);
-                                            onEmpty();
+                                            setNotification({
+                                              title: "Carrito vacío",
+                                              description:
+                                                "Has eliminado todos los platillos del carrito",
+                                            });
                                           }
                                           setCart((prev) => {
                                             if (product.quantity === 1) {

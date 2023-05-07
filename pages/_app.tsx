@@ -6,6 +6,7 @@ import Header from "@/components/header";
 import { AuthProvider } from "@/context/Auth";
 import { LoadingProvider } from "@/context/Loading";
 import { ErrorProvider } from "@/context/Error";
+import { NotificationProvider } from "@/context/Notification";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -36,8 +37,10 @@ export default function App({ Component, pageProps }: AppProps) {
       <AuthProvider>
         <LoadingProvider>
           <ErrorProvider>
-            <Header />
-            <Component {...pageProps} />
+            <NotificationProvider>
+              <Header />
+              <Component {...pageProps} />
+            </NotificationProvider>
           </ErrorProvider>
         </LoadingProvider>
       </AuthProvider>

@@ -8,6 +8,7 @@ import { apiFetcher } from "@/lib/fetcher";
 import { useLoadingContext } from "@/context/Loading";
 import { useErrorContext } from "@/context/Error";
 import { handleErrorModal } from "@/lib/error";
+import { useNotificationContext } from "@/context/Notification";
 
 export interface OrderModalProps {
   account: Account;
@@ -29,6 +30,7 @@ export default function OrderModal({
 
   const { setLoadingModal } = useLoadingContext();
   const { setErrorModal } = useErrorContext();
+  const { setNotification } = useNotificationContext();
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
@@ -52,6 +54,11 @@ export default function OrderModal({
           schema: OrderSchema,
         });
 
+        setNotification({
+          title: "Orden procesada",
+          description: "Tu orden ha sido realizada con éxito",
+        });
+
         onSucess();
       } catch (error) {
         handleErrorModal(error, setErrorModal);
@@ -66,6 +73,7 @@ export default function OrderModal({
       form,
       restaurantId,
       cart,
+      setNotification,
       onSucess,
       setErrorModal,
       onClose,

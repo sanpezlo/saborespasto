@@ -13,7 +13,6 @@ import ShoppingCart from "@/components/shoppingCart";
 
 import QuickviewsModal from "@/components/modals/quickviewsModal";
 import { FormEvent, useCallback, useState } from "react";
-import Notification, { NotificationProps } from "@/components/notification";
 import OrderModal, { OrderModalProps } from "@/components/modals/orderModal";
 import { handleErrorModal } from "@/lib/error";
 import {
@@ -74,9 +73,6 @@ export default function MiRestaurante() {
 
   const { open, setOpen, cart, setCart } = useShoppingCart();
   const [dish, setDish] = useState<Dish | null>(null);
-  const [notification, setNotification] = useState<null | NotificationProps>(
-    null
-  );
   const [orderModal, setOrderModal] = useState<null | OrderModalProps>(null);
 
   const { setLoadingModal } = useLoadingContext();
@@ -471,26 +467,8 @@ export default function MiRestaurante() {
                 restaurantId: restaurant?.id || "",
               })
             }
-            onEmpty={() => {
-              setNotification({
-                title: "Carrito vacío",
-                description: "Has eliminado todos los platillos del carrito",
-              });
-            }}
-            onRemove={(product) => {
-              setNotification({
-                title: "Platillo eliminado del carrito",
-                description: `${product.dish.name}`,
-              });
-            }}
           />
-          {notification && (
-            <Notification
-              title={notification.title}
-              description={notification.description}
-              onClose={() => setNotification(null)}
-            />
-          )}
+
           {orderModal && (
             <OrderModal
               account={orderModal.account}
@@ -498,10 +476,6 @@ export default function MiRestaurante() {
               restaurantId={orderModal.restaurantId}
               onClose={() => setOrderModal(null)}
               onSucess={() => {
-                setNotification({
-                  title: "Orden procesada",
-                  description: "Tu orden ha sido realizada con éxito",
-                });
                 setCart([]);
               }}
             />
@@ -517,18 +491,6 @@ export default function MiRestaurante() {
           setCart={setCart}
           onClose={() => {
             setDish(null);
-          }}
-          onShoppingCartSubmit={(product) => {
-            setNotification({
-              title: "Platillo agregado al carrito",
-              description: `${product.dish.name} - ${product.quantity}`,
-            });
-          }}
-          onReviewSubmit={() => {
-            setNotification({
-              title: "Reseña publicada",
-              description: "Tu reseña ha sido publicada con éxito",
-            });
           }}
         />
       ) : (

@@ -7,7 +7,6 @@ import { useAdmin } from "@/hooks/admin";
 import { useState } from "react";
 import EditDishModal from "@/components/modals/editDishModal";
 import { DishAndCategories } from "@/types/DishAndCategories";
-import Notification, { NotificationProps } from "@/components/notification";
 import { useSWRConfig } from "swr";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
@@ -18,14 +17,9 @@ import {
 import { apiFetcherSWR } from "@/lib/fetcher";
 
 export default function MiRestaurante() {
-  const { mutate } = useSWRConfig();
-
   const { isLoadingAccount, restaurant, isLoadingRestaurant } = useAdmin();
 
   const [dish, setDish] = useState<DishAndCategories | null>(null);
-  const [notification, setNotification] = useState<null | NotificationProps>(
-    null
-  );
 
   const [openReview, setOpenReview] = useState(false);
 
@@ -298,24 +292,9 @@ export default function MiRestaurante() {
           onClose={() => {
             setDish(null);
           }}
-          onSucess={() => {
-            setNotification({
-              title: "Plato editado",
-              description: "Tu plato ha sido editado exitosamente",
-            });
-            mutate("/restaurants/dishes/self");
-          }}
         />
       ) : (
         <></>
-      )}
-
-      {notification && (
-        <Notification
-          title={notification.title}
-          description={notification.description}
-          onClose={() => setNotification(null)}
-        />
       )}
     </>
   );
