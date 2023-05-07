@@ -35,7 +35,7 @@ export default function Notification({
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <div className="fixed top-0 right-0 m-2 bg-white rounded-lg border-gray-300 border p-3 shadow-lg">
+        <div className="fixed top-0 right-0 m-2 bg-white rounded-lg border-gray-300 border p-3 shadow-lg z-10">
           <div className="flex flex-row">
             <div className="px-2">
               <CheckCircleIcon className="h-6 w-6 text-green-500" />

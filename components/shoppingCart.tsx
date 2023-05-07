@@ -1,30 +1,25 @@
-import { Dispatch, Fragment, SetStateAction, useCallback } from "react";
+import { Fragment, useCallback } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Product } from "@/hooks/shoppingCart";
 import { useNotificationContext } from "@/context/Notification";
+import { useShoppingCartContext } from "@/context/ShoppingCart";
+import { useOrderContext } from "@/context/Order";
 
 export interface ShoppingCartProps {
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  cart: Product[];
-  setCart: Dispatch<SetStateAction<Product[]>>;
-  onClick?: () => void;
+  restaurantId: string;
 }
 
-export default function ShoppingCart({
-  open,
-  setOpen,
-  cart,
-  setCart,
-  onClick = () => {},
-}: ShoppingCartProps) {
+export default function ShoppingCart({ restaurantId }: ShoppingCartProps) {
   const { setNotification } = useNotificationContext();
+  const { open, setOpen, cart, setCart } = useShoppingCartContext();
+  const { setOrderModal } = useOrderContext();
 
   const handleClick = useCallback(() => {
-    onClick();
+    setOrderModal({
+      restaurantId: restaurantId,
+    });
     setOpen(false);
-  }, [onClick, setOpen]);
+  }, [restaurantId, setOpen, setOrderModal]);
 
   return (
     <Transition.Root show={open} as={Fragment}>

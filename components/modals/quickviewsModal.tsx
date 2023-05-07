@@ -1,16 +1,8 @@
-import {
-  Dispatch,
-  FormEvent,
-  Fragment,
-  SetStateAction,
-  useCallback,
-  useState,
-} from "react";
+import { FormEvent, Fragment, useCallback, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Dish } from "@/types/Dish";
-import { Product } from "@/hooks/shoppingCart";
 import {
   CreateDishReview,
   CreateDishReviewSchema,
@@ -21,26 +13,26 @@ import { useLoadingContext } from "@/context/Loading";
 import { useErrorContext } from "@/context/Error";
 import { handleErrorModal } from "@/lib/error";
 import { useNotificationContext } from "@/context/Notification";
+import { useShoppingCartContext } from "@/context/ShoppingCart";
+import { useAuthContext } from "@/context/Auth";
 
 export interface QuickviewsModalProps {
-  isAuth: boolean;
   dish: Dish;
-  setCart: Dispatch<SetStateAction<Product[]>>;
   onClose?: () => void;
 }
 
 export default function QuickviewsModal({
-  isAuth,
   dish,
-  setCart,
   onClose = () => {},
 }: QuickviewsModalProps) {
   const [open, setOpen] = useState(true);
   const [quantity, setQuantity] = useState(1);
 
+  const { account } = useAuthContext();
   const { setLoadingModal } = useLoadingContext();
   const { setErrorModal } = useErrorContext();
   const { setNotification } = useNotificationContext();
+  const { setCart } = useShoppingCartContext();
 
   const handleShoppingCartSubmit = useCallback(
     async (e: FormEvent) => {
@@ -195,7 +187,7 @@ export default function QuickviewsModal({
                               </a>
                             </div>
 
-                            {isAuth ? (
+                            {account && (
                               <div className="mt-4 rounded-md bg-gray-50 p-4 border border-gray-100 shadow-sm   focus-within:shadow focus-within:border-gray-200 hover:shadow hover:border-gray-200">
                                 <form onSubmit={handleReviewSubmit}>
                                   <div className="space-y-2">
@@ -273,8 +265,6 @@ export default function QuickviewsModal({
                                   </div>
                                 </form>
                               </div>
-                            ) : (
-                              <></>
                             )}
                           </div>
                         </section>
@@ -287,7 +277,7 @@ export default function QuickviewsModal({
                             Opciones del plato
                           </h3>
 
-                          {isAuth ? (
+                          {account && (
                             <form onSubmit={handleShoppingCartSubmit}>
                               <div>
                                 <label
@@ -321,8 +311,6 @@ export default function QuickviewsModal({
                                 Agregar al carrito
                               </button>
                             </form>
-                          ) : (
-                            <></>
                           )}
                         </section>
                       </div>
