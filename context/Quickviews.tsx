@@ -24,11 +24,6 @@ type QuickviewsProviderProps = {
   children?: ReactNode;
 };
 
-export interface Product {
-  quantity: number;
-  dish: Dish;
-}
-
 export function QuickviewsProvider({ children }: QuickviewsProviderProps) {
   const [quickviewsModal, setQuickviewsModal] =
     useState<QuickviewsModalProps | null>(null);

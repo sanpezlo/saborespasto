@@ -2,39 +2,27 @@ import { FormEvent, useCallback, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { ShoppingCartIcon, UserCircleIcon } from "@heroicons/react/24/solid";
-import { StarIcon } from "@heroicons/react/20/solid";
+import { ShoppingCartIcon } from "@heroicons/react/24/solid";
 
 import Loading from "@/components/loading";
 import { useNoAdmin } from "@/hooks/noAdmin";
 import { ErrorResponse } from "@/types/ErrorResponse";
-import { apiFetcher, apiFetcherSWR } from "@/lib/fetcher";
+import { apiFetcherSWR } from "@/lib/fetcher";
 import ShoppingCart from "@/components/shoppingCart";
 
-import { handleErrorModal } from "@/lib/error";
 import {
   RestaurantAndDishes,
   RestaurantAndDishesSchema,
 } from "@/types/RestaurantAndDishes";
-import {
-  CreateRestaurantReview,
-  CreateRestaurantReviewSchema,
-  RestaurantReviewSchema,
-} from "@/types/RestaurantReview";
-import {
-  RestaurantReviewAndAccount,
-  RestaurantReviewsAndAccountSchema,
-} from "@/types/RestaurantReviewAndAccount";
-import { useLoadingContext } from "@/context/Loading";
-import { useErrorContext } from "@/context/Error";
+
 import {
   ShoppingCartProvider,
   useShoppingCartContext,
 } from "@/context/ShoppingCart";
 import { OrderProvider } from "@/context/Order";
-import { QuickviewsProvider, useQuickviewsContext } from "@/context/Quickviews";
-import { Dish } from "@/types/Dish";
-import { DishAndCategories } from "@/types/DishAndCategories";
+import { QuickviewsProvider } from "@/context/Quickviews";
+import { Dishes } from "@/components/restaurants/dishes";
+import { Reviews } from "@/components/restaurants/reviews";
 
 export default function MiRestaurante() {
   const router = useRouter();
@@ -52,62 +40,6 @@ export default function MiRestaurante() {
     {
       shouldRetryOnError: false,
     }
-  );
-
-  const [openReview, setOpenReview] = useState(false);
-
-  const { data: reviews, isLoading: isLoadingReviews } = useSWR<
-    RestaurantReviewAndAccount[]
-  >(
-    () =>
-      restaurant && openReview
-        ? `/reviews/restaurants/${restaurant.slug}`
-        : null,
-    apiFetcherSWR({ schema: RestaurantReviewsAndAccountSchema }),
-    {
-      shouldRetryOnError: false,
-      revalidateOnFocus: false,
-      refreshInterval: 0,
-      refreshWhenOffline: false,
-      refreshWhenHidden: false,
-      revalidateOnReconnect: false,
-      revalidateIfStale: false,
-    }
-  );
-
-  const { setLoadingModal } = useLoadingContext();
-  const { setErrorModal } = useErrorContext();
-
-  const [review, setReview] = useState<CreateRestaurantReview>({
-    comment: "",
-    rating: 0,
-    restaurantId: "",
-  });
-
-  const handleCreateRestaurantReview = useCallback(
-    async (e: FormEvent) => {
-      e.preventDefault();
-      setLoadingModal({ title: "Publicando comentario..." });
-      try {
-        const createRestaurantReview = CreateRestaurantReviewSchema.parse({
-          ...review,
-          restaurantId: restaurant?.id,
-        });
-
-        await apiFetcher("/reviews/restaurants", {
-          method: "POST",
-          body: JSON.stringify(createRestaurantReview),
-          schema: RestaurantReviewSchema,
-        });
-
-        setReview({ comment: "", rating: 0, restaurantId: "" });
-      } catch (error) {
-        handleErrorModal(error, setErrorModal);
-      } finally {
-        setLoadingModal(null);
-      }
-    },
-    [setErrorModal, setLoadingModal, restaurant, review]
   );
 
   if (isLoadingAccount || isLoadingRestaurant)
@@ -156,171 +88,11 @@ export default function MiRestaurante() {
           </div>
           <div className="bg-white">
             <div className="mx-auto max-w-2xl px-4 pb-10 sm:px-6 lg:max-w-7xl lg:px-8 ">
-              <div
-                className={`pb-2 mb-4 ${
-                  account ? "" : "border-b border-gray-200"
-                }`}
-              >
-                <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-                  Reseñas
-                </h2>
-                <div className="flex items-center my-2">
-                  {[0, 1, 2, 3, 4].map((rating) => (
-                    <StarIcon
-                      key={rating}
-                      className={`${
-                        (restaurant?.rating || 0) > rating
-                          ? "text-indigo-600"
-                          : "text-gray-200"
-                      } h-5 w-5 flex-shrink-0`}
-                      aria-hidden="true"
-                      onClick={() =>
-                        setReview((prev) => ({
-                          ...prev,
-                          rating: rating + 1,
-                        }))
-                      }
-                    />
-                  ))}
-                  <p className="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {restaurant?.rating || 0} de 5
-                  </p>
-                  <button
-                    className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                    onClick={() => {
-                      setOpenReview((prev) => !prev);
-                    }}
-                  >
-                    {openReview ? "Ocultar comentarios" : "Ver comentarios"}
-                  </button>
-                </div>
-
-                {openReview ? (
-                  isLoadingReviews ? (
-                    <Loading />
-                  ) : (
-                    <div className="mt-4">
-                      {reviews &&
-                        reviews.map((review) => (
-                          <div key={review.id} className="flex items-start">
-                            <UserCircleIcon className="h-10 w-10 text-gray-600 mt-0" />
-                            <div className="ml-1 w-full">
-                              <span className="ml-2 text-sm font-medium text-gray-900">
-                                {review.account.name}
-                              </span>
-                              <div className="mt-1 bg-gray-100 p-2 rounded-md text-sm text-gray-600">
-                                <p>{review.comment}</p>
-                              </div>
-                              <div className="flex items-center my-2">
-                                {[0, 1, 2, 3, 4].map((rating) => (
-                                  <StarIcon
-                                    key={rating}
-                                    className={`${
-                                      (review.rating || 0) > rating
-                                        ? "text-gray-600"
-                                        : "text-gray-200"
-                                    } h-5 w-5 flex-shrink-0`}
-                                    aria-hidden="true"
-                                  />
-                                ))}
-                                <p className="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                                  {review.rating || 0} de 5
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  )
-                ) : (
-                  <></>
-                )}
-
-                {account ? (
-                  <form
-                    onSubmit={handleCreateRestaurantReview}
-                    className="mt-4 rounded-md bg-gray-100 p-4 border border-gray-200 shadow-sm"
-                  >
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-bold tracking-tight text-gray-900">
-                        Deja tu comentario
-                      </h3>
-
-                      <div className="mt-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                        <div className="col-span-full">
-                          <label
-                            htmlFor="about"
-                            className="block text-sm font-medium leading-6 text-gray-900"
-                          >
-                            Tu reseña
-                          </label>
-                          <div className="mt-2">
-                            <textarea
-                              id="about"
-                              name="about"
-                              rows={3}
-                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              defaultValue={""}
-                              required
-                              onChange={(e) =>
-                                setReview({
-                                  ...review,
-                                  comment: e.target.value,
-                                })
-                              }
-                              value={review.comment}
-                            />
-                          </div>
-                          <p className="mt-3 text-sm leading-6 text-gray-600">
-                            Escriba una reseña detallada que brinde información
-                            sobre su experiencia con el restaurante.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-end justify-between">
-                      <div>
-                        <h4 className="block text-sm font-medium leading-6 text-gray-900 mb-1">
-                          Estrellas
-                        </h4>
-                        <div className="flex items-center">
-                          <div className="flex items-center">
-                            {[0, 1, 2, 3, 4].map((rating) => (
-                              <StarIcon
-                                key={rating}
-                                className={`${
-                                  review.rating > rating
-                                    ? "text-indigo-600"
-                                    : "text-gray-200"
-                                } h-5 w-5 flex-shrink-0`}
-                                aria-hidden="true"
-                                onClick={() =>
-                                  setReview({
-                                    ...review,
-                                    rating: rating + 1,
-                                  })
-                                }
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <button
-                          type="submit"
-                          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
-                        >
-                          Publicar reseña
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                ) : (
-                  <></>
-                )}
-              </div>
-
+              <Reviews
+                slug={restaurant?.slug || ""}
+                restaurantRating={restaurant?.rating || 0}
+                isAdmin={false}
+              />
               <Dishes dishes={restaurant?.Dish || []} />
             </div>
           </div>
@@ -356,82 +128,5 @@ function ShoppingCartButton() {
         </p>
       </div>
     </button>
-  );
-}
-
-function Dishes({ dishes }: { dishes: DishAndCategories[] }) {
-  const { setQuickviewsModal } = useQuickviewsContext();
-
-  return (
-    <div>
-      <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-        Platos
-      </h2>
-      <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-        {dishes.map((dish) => (
-          <div key={dish.id} className="group relative">
-            <div className="min-h-80 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:h-80">
-              <img
-                src={dish.image}
-                alt={dish.description}
-                className="h-full w-full object-cover object-center lg:h-full lg:w-full group-hover:opacity-75"
-              />
-              <div className="absolute flex items-end justify-center opacity-0 focus:opacity-100 group-hover:opacity-100">
-                <div className="m-4 w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-sm text-black  text-center">
-                  Vista rápida
-                </div>
-              </div>
-            </div>
-            <div className="flex mt-2 flex-wrap gap-2">
-              {dish.CategoriesInDishes.map((categoryInDish) => (
-                <div
-                  key={categoryInDish.id}
-                  className="text-xs rounded-full bg-gray-200 px-3 py-1.5 font-medium text-gray-600"
-                >
-                  {categoryInDish.category.name}
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 flex justify-between">
-              <div>
-                <h3 className="text-sm text-gray-700">
-                  <button onClick={() => setQuickviewsModal({ dish })}>
-                    <span aria-hidden="true" className="absolute inset-0" />
-                    {dish.name}
-                  </button>
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">{dish.description}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">
-                  {dish.price && dish.price - dish.new_price > 0 && (
-                    <span className="text-red-500 line-through">
-                      ${dish.price.toLocaleString("es-Co")}
-                    </span>
-                  )}
-                </p>
-                <p className="text-sm font-medium text-gray-900">
-                  ${dish.new_price.toLocaleString("es-Co")}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center mt-2">
-              {[0, 1, 2, 3, 4].map((rating) => (
-                <StarIcon
-                  key={rating}
-                  className={`${
-                    4 > rating ? "text-indigo-600" : "text-gray-200"
-                  } h-5 w-5 flex-shrink-0`}
-                  aria-hidden="true"
-                />
-              ))}
-              <p className="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                4.95 de 5
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
   );
 }

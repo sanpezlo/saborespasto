@@ -69,7 +69,9 @@ export default function Home() {
               }}
               className="w-full h-full rounded-2xl bg-center bg-cover duration-500 ease-in-out transition-all hover:scale-105 cursor-pointer"
               onClick={() => {
-                router.push(`/restaurantes/${restaurants[currentIndex].slug}`);
+                router.replace(
+                  `/restaurantes/${restaurants[currentIndex].slug}`
+                );
               }}
             ></div>
             <div className="hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[-50%] left-5 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer">

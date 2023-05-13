@@ -15,32 +15,12 @@ import {
   RestaurantReviewsAndAccountSchema,
 } from "@/types/RestaurantReviewAndAccount";
 import { apiFetcherSWR } from "@/lib/fetcher";
+import { EditDishProvider, useEditDishContext } from "@/context/EditDish";
+import { Dishes } from "@/components/restaurants/dishes";
+import { Reviews } from "@/components/restaurants/reviews";
 
 export default function MiRestaurante() {
   const { isLoadingAccount, restaurant, isLoadingRestaurant } = useAdmin();
-
-  const [dish, setDish] = useState<DishAndCategories | null>(null);
-
-  const [openReview, setOpenReview] = useState(false);
-
-  const { data: reviews, isLoading: isLoadingReviews } = useSWR<
-    RestaurantReviewAndAccount[]
-  >(
-    () =>
-      restaurant && openReview
-        ? `/reviews/restaurants/${restaurant.slug}`
-        : null,
-    apiFetcherSWR({ schema: RestaurantReviewsAndAccountSchema }),
-    {
-      shouldRetryOnError: false,
-      revalidateOnFocus: false,
-      refreshInterval: 0,
-      refreshWhenOffline: false,
-      refreshWhenHidden: false,
-      revalidateOnReconnect: false,
-      revalidateIfStale: false,
-    }
-  );
 
   if (isLoadingAccount || isLoadingRestaurant)
     return (
@@ -56,205 +36,59 @@ export default function MiRestaurante() {
 
   return (
     <>
-      <Head>
-        <title> Sabores Pasto - Mi Restaurante </title>
-      </Head>
+      <EditDishProvider>
+        <Head>
+          <title> Sabores Pasto - Mi Restaurante </title>
+        </Head>
 
-      <main>
-        <div className="overflow-hidden bg-white pb-10">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-              <div className="lg:pr-8 lg:pt-4 flex flex-col justify-center">
-                <div className="lg:max-w-lg">
-                  <h1 className="font text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-                    {restaurant?.name}
-                  </h1>
+        <main>
+          <div className="overflow-hidden bg-white pb-10">
+            <div className="mx-auto max-w-7xl px-6 lg:px-8">
+              <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+                <div className="lg:pr-8 lg:pt-4 flex flex-col justify-center">
+                  <div className="lg:max-w-lg">
+                    <h1 className="font text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+                      {restaurant?.name}
+                    </h1>
 
-                  <p className="my-4 text-xl text-gray-500">
-                    {restaurant?.description}
-                  </p>
-                </div>
-                <Link
-                  href="/mi-restaurante/crear-plato"
-                  className="inline-block rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-center font-medium text-white hover:bg-indigo-700 mb-2"
-                >
-                  Crear Plato
-                </Link>
-                <Link
-                  href="/mi-restaurante/crear-categoria"
-                  className="inline-block rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-center font-medium text-white hover:bg-indigo-700"
-                >
-                  Crear Categoria
-                </Link>
-              </div>
-              <img
-                src={restaurant?.image}
-                alt="Product screenshot"
-                className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0"
-                width={2432}
-                height={1442}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="bg-white">
-          <div className="mx-auto max-w-2xl px-4 pb-10 sm:px-6 lg:max-w-7xl lg:px-8">
-            <div className="pb-2 mb-4 border-b border-gray-200">
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-                Reseñas
-              </h2>
-              <div className="flex items-center my-2">
-                {[0, 1, 2, 3, 4].map((rating) => (
-                  <StarIcon
-                    key={rating}
-                    className={`${
-                      (restaurant?.rating || 0) > rating
-                        ? "text-indigo-600"
-                        : "text-gray-200"
-                    } h-5 w-5 flex-shrink-0`}
-                    aria-hidden="true"
-                  />
-                ))}
-                <p className="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {restaurant?.rating || 0} de 5
-                </p>
-                <button
-                  className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                  onClick={() => {
-                    setOpenReview((prev) => !prev);
-                  }}
-                >
-                  {openReview ? "Ocultar comentarios" : "Ver comentarios"}
-                </button>
-              </div>
-
-              {openReview ? (
-                isLoadingReviews ? (
-                  <Loading />
-                ) : (
-                  <div className="mt-4">
-                    {reviews &&
-                      reviews.map((review) => (
-                        <div key={review.id} className="flex items-start">
-                          <UserCircleIcon className="h-10 w-10 text-gray-600 mt-0" />
-                          <div className="ml-1 w-full">
-                            <span className="ml-2 text-sm font-medium text-gray-900">
-                              {review.account.name}
-                            </span>
-                            <div className="mt-1 bg-gray-100 p-2 rounded-md text-sm text-gray-600">
-                              <p>{review.comment}</p>
-                            </div>
-                            <div className="flex items-center my-2">
-                              {[0, 1, 2, 3, 4].map((rating) => (
-                                <StarIcon
-                                  key={rating}
-                                  className={`${
-                                    (review.rating || 0) > rating
-                                      ? "text-gray-600"
-                                      : "text-gray-200"
-                                  } h-5 w-5 flex-shrink-0`}
-                                  aria-hidden="true"
-                                />
-                              ))}
-                              <p className="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                                {review.rating || 0} de 5
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                    <p className="my-4 text-xl text-gray-500">
+                      {restaurant?.description}
+                    </p>
                   </div>
-                )
-              ) : (
-                <></>
-              )}
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-                Platos
-              </h2>
-
-              <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-                {restaurant?.Dish &&
-                  restaurant.Dish.map((dish) => (
-                    <div key={dish.id} className="group relative">
-                      <div className="min-h-80 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                        <img
-                          src={dish.image}
-                          alt={dish.description}
-                          className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                        />
-                      </div>
-                      <div className="flex mt-2 flex-wrap gap-2">
-                        {dish.CategoriesInDishes.map((categoryInDish) => (
-                          <div
-                            key={categoryInDish.id}
-                            className="text-xs rounded-full bg-gray-200 px-3 py-1.5 font-medium text-gray-600"
-                          >
-                            {categoryInDish.category.name}
-                          </div>
-                        ))}
-                      </div>
-                      <div className="mt-4 flex justify-between">
-                        <div>
-                          <h3 className="text-sm text-gray-700">
-                            <button onClick={() => setDish(dish)}>
-                              <span
-                                aria-hidden="true"
-                                className="absolute inset-0"
-                              />
-                              {dish.name}
-                            </button>
-                          </h3>
-                          <p className="mt-1 text-sm text-gray-500">
-                            {dish.description}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            {dish.price && dish.price - dish.new_price > 0 && (
-                              <span className="text-red-500 line-through">
-                                ${dish.price.toLocaleString("es-Co")}
-                              </span>
-                            )}
-                          </p>
-                          <p className="text-sm font-medium text-gray-900">
-                            ${dish.new_price.toLocaleString("es-Co")}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center mt-2">
-                        {[0, 1, 2, 3, 4].map((rating) => (
-                          <StarIcon
-                            key={rating}
-                            className={`${
-                              4 > rating ? "text-indigo-600" : "text-gray-200"
-                            } h-5 w-5 flex-shrink-0`}
-                            aria-hidden="true"
-                          />
-                        ))}
-                        <p className="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                          4.95 de 5
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                  <Link
+                    href="/mi-restaurante/crear-plato"
+                    className="inline-block rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-center font-medium text-white hover:bg-indigo-700 mb-2"
+                  >
+                    Crear Plato
+                  </Link>
+                  <Link
+                    href="/mi-restaurante/crear-categoria"
+                    className="inline-block rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-center font-medium text-white hover:bg-indigo-700"
+                  >
+                    Crear Categoria
+                  </Link>
+                </div>
+                <img
+                  src={restaurant?.image}
+                  alt="Product screenshot"
+                  className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0"
+                  width={2432}
+                  height={1442}
+                />
               </div>
             </div>
           </div>
-        </div>
-      </main>
-      {dish ? (
-        <EditDishModal
-          dish={dish}
-          onClose={() => {
-            setDish(null);
-          }}
-        />
-      ) : (
-        <></>
-      )}
+          <div className="bg-white">
+            <div className="mx-auto max-w-2xl px-4 pb-10 sm:px-6 lg:max-w-7xl lg:px-8">
+              <Reviews
+                slug={restaurant?.slug || ""}
+                restaurantRating={restaurant?.rating || 0}
+              />
+              <Dishes dishes={restaurant?.Dish || []} isAdmin />
+            </div>
+          </div>
+        </main>
+      </EditDishProvider>
     </>
   );
 }
