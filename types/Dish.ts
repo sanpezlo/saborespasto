@@ -16,7 +16,7 @@ export const DishSchema = z.object({
 
 export const DishesSchema = z.array(DishSchema);
 
-export const CreateDishSchema = z.object({
+export const DishBaseSchema = z.object({
   name: z
     .string({
       required_error: "El nombre es requerido",
@@ -55,6 +55,16 @@ export const CreateDishSchema = z.object({
     .url({
       message: "La imagen debe ser una URL válida",
     }),
+});
+
+export const UpdateDishSchema = DishBaseSchema.extend({
+  id: z.string({
+    required_error: "El id es requerido",
+    invalid_type_error: "El id debe ser una cadena de texto",
+  }),
+});
+
+export const CreateDishSchema = DishBaseSchema.extend({
   categories: z.array(
     z.string({
       required_error: "Las categorías son requeridas",
@@ -69,5 +79,7 @@ export const CreateDishSchema = z.object({
 });
 
 export type Dish = z.infer<typeof DishSchema>;
+
+export type UpdateDish = z.infer<typeof UpdateDishSchema>;
 
 export type CreateDish = z.infer<typeof CreateDishSchema>;
