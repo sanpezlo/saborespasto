@@ -79,8 +79,8 @@ export const CreateOrderSchema = z.object({
         invalid_type_error: "Los platillos deben ser un arreglo de objetos",
       }
     )
-    .nonempty({
-      message: "Los platillos no pueden estar vacíos",
+    .min(1, {
+      message: "Los platillos deben tener al menos un platillo",
     }),
 });
 

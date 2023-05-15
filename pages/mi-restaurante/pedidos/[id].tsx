@@ -114,6 +114,7 @@ export default function Pedido() {
                 {order?.status === "pending" && "Pendiente"}
                 {order?.status === "preparing" && "Preparando"}
                 {order?.status === "completed" && "Completado"}
+                {order?.status === "canceled" && "Cancelado"}
               </dd>
             </div>
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -165,17 +166,26 @@ export default function Pedido() {
               </dd>
             </div>{" "}
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-              {order?.status !== "completed" && (
+              {order?.status !== "completed" &&
+                order?.status !== "canceled" && (
+                  <button
+                    className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
+                    onClick={() =>
+                      handleClick(
+                        order?.status === "pending" ? "preparing" : "completed"
+                      )
+                    }
+                  >
+                    Cambiar estado a{" "}
+                    {order?.status === "pending" ? "preparando" : "completado"}
+                  </button>
+                )}
+              {order?.status === "pending" && (
                 <button
-                  className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
-                  onClick={() =>
-                    handleClick(
-                      order?.status === "pending" ? "preparing" : "completed"
-                    )
-                  }
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => handleClick("canceled")}
                 >
-                  Cambiar estado a{" "}
-                  {order?.status === "pending" ? "preparando" : "completado"}
+                  Cancelar pedido
                 </button>
               )}
             </div>

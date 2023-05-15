@@ -76,6 +76,7 @@ export default function Pedidos() {
                       {order.status === "pending" && "Pendiente"}
                       {order.status === "preparing" && "Preparando"}
                       {order.status === "completed" && "Completado"}
+                      {order.status === "cancelled" && "Cancelado"}
                     </div>
                   </div>
                   <div className="relative">

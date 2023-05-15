@@ -50,6 +50,7 @@ async function updateStatusOrder(
     },
     data: {
       status: updateStatusOrder.status,
+      deletedAt: updateStatusOrder.status === "canceled" ? new Date() : null,
     },
   });
 
