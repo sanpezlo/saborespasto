@@ -29,7 +29,7 @@ export default function Pedidos() {
         <Head>
           <title> Sabores Pasto - Pedidos</title>
         </Head>
-        <main className="mx-auto flex max-w-7xl items-center justify-center">
+        <main className="mt-10 mx-auto flex max-w-7xl items-center justify-center">
           <Loading />
         </main>
       </>
@@ -40,7 +40,7 @@ export default function Pedidos() {
       <Head>
         <title> Sabores Pasto - Pedidos</title>
       </Head>
-      <div className="bg-white">
+      <main className="mt-10 bg-white">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:mx-0">
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
@@ -106,7 +106,7 @@ export default function Pedidos() {
               ))}
           </div>
         </div>
-      </div>
+      </main>
     </>
   );
 }

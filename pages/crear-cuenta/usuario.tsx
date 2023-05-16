@@ -81,7 +81,7 @@ export default function CrearCuentaUsuario() {
         <Head>
           <title> Sabores Pasto - Crear Cuenta Usuario</title>
         </Head>
-        <main className="mx-auto flex max-w-7xl items-center justify-center">
+        <main className="mt-10 mx-auto flex max-w-7xl items-center justify-center">
           <Loading />
         </main>
       </>
@@ -93,7 +93,7 @@ export default function CrearCuentaUsuario() {
         <title> Sabores Pasto - Crear Cuenta Usuario </title>
       </Head>
 
-      <main className="mx-auto flex max-w-7xl items-center justify-center">
+      <main className="mt-10 mx-auto flex max-w-7xl items-center justify-center">
         <form className="bg-white " onSubmit={handleSubmit}>
           <div className="space-y-12">
             <div className="border-b border-gray-900/10 pb-10">

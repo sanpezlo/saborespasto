@@ -75,6 +75,10 @@ export const CreateRestaurantSchema = z.object({
     }),
 });
 
+export const UpdateRestaurantSchema = CreateRestaurantSchema;
+
 export type CreateRestaurant = z.infer<typeof CreateRestaurantSchema>;
+
+export type UpdateRestaurant = z.infer<typeof UpdateRestaurantSchema>;
 
 export type Restaurant = z.infer<typeof RestaurantSchema>;

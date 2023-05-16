@@ -13,7 +13,7 @@ export default function CrearCuenta() {
         <Head>
           <title> Sabores Pasto - Crear Cuenta</title>
         </Head>
-        <main className="mx-auto flex max-w-7xl items-center justify-center">
+        <main className="mt-10 mx-auto flex max-w-7xl items-center justify-center">
           <Loading />
         </main>
       </>
@@ -25,7 +25,7 @@ export default function CrearCuenta() {
         <title>Sabores Pasto - Crear Cuenta</title>
       </Head>
 
-      <main className="bg-white">
+      <main className="mt-10 bg-white">
         <div className="relative isolate px-6 lg:px-8">
           <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
             <div className="text-center">

@@ -49,7 +49,7 @@ export default function Home() {
         <Head>
           <title> Sabores Pasto - Inicio</title>
         </Head>
-        <main className="mx-auto flex max-w-7xl items-center justify-center">
+        <main className="mt-10 mx-auto flex max-w-7xl items-center justify-center">
           <Loading />
         </main>
       </>
@@ -60,7 +60,7 @@ export default function Home() {
       <Head>
         <title> Sabores Pasto - Inicio </title>
       </Head>
-      <main>
+      <main className="mt-10">
         {restaurants && (
           <div className="max-w-[1400px] h-[780px] w-full m-auto py-16 px-10 relative group">
             <div

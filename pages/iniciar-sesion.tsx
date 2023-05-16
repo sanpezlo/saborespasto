@@ -59,7 +59,7 @@ export default function IniciarSesion() {
         <Head>
           <title> Sabores Pasto - Iniciar Sesion</title>
         </Head>
-        <main className="mx-auto flex max-w-7xl items-center justify-center">
+        <main className="mt-10 mx-auto flex max-w-7xl items-center justify-center">
           <Loading />
         </main>
       </>
@@ -71,7 +71,7 @@ export default function IniciarSesion() {
         <title> Sabores Pasto - Iniciar Sesion</title>
       </Head>
 
-      <main className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <main className="mt-10 flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
             className="mx-auto h-10 w-auto"

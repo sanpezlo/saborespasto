@@ -221,6 +221,7 @@ function Categories({
       setNotification,
       mutate,
       setErrorModal,
+      setOpen,
       onClose,
     ]
   );
@@ -375,6 +376,7 @@ function EditDish({
       }
     },
     [
+      dish,
       form,
       mutate,
       onClose,
