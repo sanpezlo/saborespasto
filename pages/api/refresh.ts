@@ -1,6 +1,5 @@
 import createHttpError from "http-errors";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 import { verify, decode } from "jsonwebtoken";
 
 import { apiHandler } from "@/lib/api";
@@ -15,8 +14,7 @@ import { RefreshPayload, RefreshPayloadSchema } from "@/types/AuthPayload";
 import { accessToken, refreshToken } from "@/lib/auth";
 import { getCookie, hasCookie, setCookie } from "cookies-next";
 import { RefreshSchema } from "@/types/Refresh";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 async function refresh(
   req: NextApiRequest,

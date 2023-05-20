@@ -1,6 +1,5 @@
 import createHttpError from "http-errors";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 
 import { apiHandler, withAuth } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
@@ -9,8 +8,7 @@ import {
   CreateRestaurantReviewSchema,
   RestaurantReview,
 } from "@/types/RestaurantReview";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 async function createRestaurantReview(
   req: NextApiRequest,

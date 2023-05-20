@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import createHttpError from "http-errors";
-import { PrismaClient } from "@prisma/client";
 import { setCookie } from "cookies-next";
 
 import { apiHandler, withAuth } from "@/lib/api";
@@ -12,8 +11,7 @@ import {
   ACCESS_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_EXPIRES_IN,
 } from "@/lib/config";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 async function self(
   req: NextApiRequest,

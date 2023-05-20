@@ -1,11 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 
 import { apiHandler, withAdmin } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { Category, CreateCategorySchema } from "@/types/Category";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 async function createCategory(
   req: NextApiRequest,

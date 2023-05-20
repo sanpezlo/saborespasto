@@ -94,9 +94,10 @@ export default function ShoppingCart({ restaurantId }: ShoppingCartProps) {
                                       </h3>
                                       <p className="ml-4">
                                         $
-                                        {product.dish.new_price.toLocaleString(
-                                          "es-Co"
-                                        )}
+                                        {(
+                                          product.dish.new_price *
+                                          product.quantity
+                                        ).toLocaleString("es-Co")}
                                       </p>
                                     </div>
                                     <p className="mt-1 text-sm text-gray-500">
@@ -167,8 +168,16 @@ export default function ShoppingCart({ restaurantId }: ShoppingCartProps) {
                       {cart.length > 0 && (
                         <>
                           <div className="flex justify-between text-base font-medium text-gray-900">
-                            {/* <p>Subtotal</p>
-                            <p>$262.00</p> */}
+                            <p>Subtotal</p>
+                            <p>
+                              $
+                              {cart
+                                .reduce(
+                                  (a, b) => a + b.dish.new_price * b.quantity,
+                                  0
+                                )
+                                .toLocaleString("es-Co")}
+                            </p>
                           </div>
                           <p className="mt-0.5 text-sm text-gray-500">
                             Envío e impuestos calculados en el pago.

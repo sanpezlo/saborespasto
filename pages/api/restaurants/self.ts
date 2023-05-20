@@ -1,13 +1,11 @@
 import createHttpError from "http-errors";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 
 import { Restaurant, UpdateRestaurantSchema } from "@/types/Restaurant";
 import { apiHandler, withAdmin } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { Account } from "@/types/Account";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 async function getMyRestaurant(
   req: NextApiRequest,

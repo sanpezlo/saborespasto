@@ -1,6 +1,5 @@
 import createHttpError from "http-errors";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 import { compare } from "bcrypt";
 
 import { apiHandler } from "@/lib/api";
@@ -13,8 +12,7 @@ import {
 } from "@/lib/config";
 import { accessToken, refreshToken } from "@/lib/auth";
 import { setCookie } from "cookies-next";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 async function signin(
   req: NextApiRequest,

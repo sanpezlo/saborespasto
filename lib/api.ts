@@ -4,9 +4,9 @@ import { ZodError } from "zod";
 
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { Method } from "@/types/Method";
-import { PrismaClient } from "@prisma/client";
 import { verify } from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET } from "@/lib/config";
+import { prisma } from "@/lib/db";
 import { AccessPayload } from "@/types/AuthPayload";
 import { Account } from "@/types/Account";
 import { getCookie, hasCookie } from "cookies-next";
@@ -59,8 +59,6 @@ function errorHandler(err: unknown, res: NextApiResponse<ErrorResponse>) {
 }
 
 export function withAuth(handler: NextApiHandler) {
-  const prisma = new PrismaClient();
-
   return async (req: NextApiRequest, res: NextApiResponse<ErrorResponse>) => {
     if (hasCookie("access_token", { req, res }))
       req.headers.authorization = `Bearer ${getCookie("access_token", {

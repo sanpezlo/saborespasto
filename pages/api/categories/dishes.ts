@@ -1,16 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 
 import { apiHandler, withAdmin } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
-import { Category, CreateCategorySchema } from "@/types/Category";
-import {
-  CategoriesInDishes,
-  CreateCategoriesInDishesSchema,
-} from "@/types/CategoriesInDishes";
+import { CreateCategoriesInDishesSchema } from "@/types/CategoriesInDishes";
 import createHttpError from "http-errors";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 async function createCategoriesInDishes(
   req: NextApiRequest,

@@ -1,13 +1,11 @@
 import createHttpError from "http-errors";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 
 import { apiHandler, withAdmin } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { Account } from "@/types/Account";
 import { Order } from "@/types/Order";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 async function getMyOrders(
   req: NextApiRequest,

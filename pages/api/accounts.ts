@@ -1,13 +1,11 @@
 import createHttpError from "http-errors";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
 
 import { Account, CreateAccountSchema } from "@/types/Account";
 import { apiHandler } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { genSalt, hash } from "bcrypt";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/db";
 
 async function createAccount(
   req: NextApiRequest,
