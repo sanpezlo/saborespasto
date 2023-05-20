@@ -55,7 +55,7 @@ export default function EditRestaurantModal({
         )
           return;
 
-        await apiFetcher(`/restaurants/${restaurant.slug}`, {
+        await apiFetcher("/restaurants/self", {
           method: "PUT",
           body: JSON.stringify(updateRestaurant),
         });
