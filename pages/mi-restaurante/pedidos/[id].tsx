@@ -71,7 +71,10 @@ export default function Pedido() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <Head>
+        <title> Sabores Pasto - Pedido</title>
+      </Head>
+      <main className="mx-auto max-w-7xl px-6 lg:px-8 mt-10">
         <div className="px-4 sm:px-0">
           <h3 className="text-base font-semibold leading-7 text-gray-900">
             Información del pedido
@@ -164,7 +167,7 @@ export default function Pedido() {
                     ))}
                 </ul>
               </dd>
-            </div>{" "}
+            </div>
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
               {order?.status !== "completed" &&
                 order?.status !== "canceled" && (
@@ -191,7 +194,7 @@ export default function Pedido() {
             </div>
           </dl>
         </div>
-      </div>
+      </main>
     </>
   );
 }

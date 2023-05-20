@@ -74,7 +74,15 @@ export default function EditRestaurantModal({
         onClose();
       }
     },
-    [form, onClose, restaurant, setErrorModal, setLoadingModal, setNotification]
+    [
+      form,
+      mutate,
+      onClose,
+      restaurant,
+      setErrorModal,
+      setLoadingModal,
+      setNotification,
+    ]
   );
 
   const [open, setOpen] = useState(true);
@@ -114,7 +122,7 @@ export default function EditRestaurantModal({
                 leaveTo="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
               >
                 <Dialog.Panel className="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-4xl">
-                  <div className="relative flex w-full items-center overflow-hidden bg-white px-4 pb-8 pt-14 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
+                  <div className="relative flex w-full items-center justify-center overflow-hidden bg-white px-4 pb-8 pt-14 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
                     <button
                       type="button"
                       className="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
@@ -131,7 +139,7 @@ export default function EditRestaurantModal({
                         <div className="space-y-12">
                           <div className="border-b border-gray-900/10 pb-12">
                             <h2 className="text-base font-semibold leading-7 text-gray-900">
-                              Crear restaurante
+                              Actualizar restaurante
                             </h2>
                             <p className="mt-1 text-sm leading-6 text-gray-600">
                               Esta información será mostrada públicamente, así

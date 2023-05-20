@@ -138,13 +138,26 @@ export default function Header() {
                 </Link>
                 <Link
                   href="/mi-restaurante/pedidos"
-                  className="text-sm font-semibold leading-6 text-gray-900"
+                  className="text-sm font-semibold leading-6 text-gray-900 mr-4"
                 >
                   Pedidos
                 </Link>
+                <Link
+                  href="/mi-cuenta"
+                  className="text-sm font-semibold leading-6 text-gray-900"
+                >
+                  Mi cuenta
+                </Link>
               </>
             ) : (
-              <></>
+              <>
+                <Link
+                  href="/mi-cuenta"
+                  className="text-sm font-semibold leading-6 text-gray-900"
+                >
+                  Mi cuenta
+                </Link>
+              </>
             )
           ) : (
             <>

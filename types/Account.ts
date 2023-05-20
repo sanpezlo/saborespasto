@@ -13,7 +13,7 @@ export const AccountSchema = z.object({
   deletedAt: z.string().datetime().or(z.date()).nullable(),
 });
 
-export const CreateAccountSchema = z.object({
+export const UpdateAccountSchema = z.object({
   name: z
     .string({
       required_error: "El nombre es requerido",
@@ -30,18 +30,6 @@ export const CreateAccountSchema = z.object({
     .email({
       message: "El email debe ser un email válido",
     }),
-  password: z
-    .string({
-      required_error: "La contraseña es requerida",
-      invalid_type_error: "La contraseña debe ser una cadena de texto",
-    })
-    .regex(new RegExp(".*[A-z].*"), {
-      message: "La contraseña debe contener al menos una letra",
-    })
-    .regex(new RegExp(".*\\d.*"), {
-      message: "La contraseña debe contener al menos un número",
-    })
-    .min(8, { message: "La contraseña debe tener al menos 8 caracteres" }),
   address: z
     .string({
       required_error: "La dirección es requerida",
@@ -65,11 +53,28 @@ export const CreateAccountSchema = z.object({
     })
     .nullable()
     .default(null),
+});
+
+export const CreateAccountSchema = UpdateAccountSchema.extend({
+  password: z
+    .string({
+      required_error: "La contraseña es requerida",
+      invalid_type_error: "La contraseña debe ser una cadena de texto",
+    })
+    .regex(new RegExp(".*[A-z].*"), {
+      message: "La contraseña debe contener al menos una letra",
+    })
+    .regex(new RegExp(".*\\d.*"), {
+      message: "La contraseña debe contener al menos un número",
+    })
+    .min(8, { message: "La contraseña debe tener al menos 8 caracteres" }),
   admin: z.boolean({
     required_error: "El campo admin es requerido",
     invalid_type_error: "El campo admin debe ser un booleano",
   }),
 });
+
+export type UpdateAccount = z.infer<typeof UpdateAccountSchema>;
 
 export type CreateAccount = z.infer<typeof CreateAccountSchema>;
 
