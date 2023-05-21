@@ -65,7 +65,7 @@ export default function EditRestaurantModal({
           description: "El restaurante se ha actualizado correctamente",
         });
 
-        mutate("/restaurants/dishes/self");
+        await mutate("/restaurants/dishes/self");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {

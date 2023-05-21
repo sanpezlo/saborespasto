@@ -46,8 +46,8 @@ export default function CrearRestaurante() {
             schema: RestaurantAndDishesSchema,
           }
         );
-        if (mutateRestaurant !== undefined) mutateRestaurant(restaurant);
-        router.replace("mi-restaurante");
+        if (mutateRestaurant !== undefined) await mutateRestaurant(restaurant);
+        router.push("/mi-restaurante");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {

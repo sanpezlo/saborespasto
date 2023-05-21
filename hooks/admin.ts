@@ -15,11 +15,11 @@ export function useAdmin() {
   useEffect(() => {
     if (isLoadingAccount) return;
     if (!account) {
-      router.replace("/iniciar-sesion");
+      router.push("/iniciar-sesion");
       return;
     }
     if (!account.admin) {
-      router.replace("404");
+      router.push("/404");
       return;
     }
   }, [account, router, isLoadingAccount]);

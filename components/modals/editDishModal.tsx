@@ -205,7 +205,7 @@ function Categories({
           title: "Plato editado",
           description: "Tu plato ha sido editado exitosamente",
         });
-        mutate("/restaurants/dishes/self");
+        await mutate("/restaurants/dishes/self");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {

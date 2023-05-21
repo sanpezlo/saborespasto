@@ -64,8 +64,8 @@ export default function CrearCuentaUsuario() {
           refresh: false,
         });
 
-        router.replace("/");
-        mutateAccount(account);
+        router.push("/");
+        await mutateAccount(account);
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {

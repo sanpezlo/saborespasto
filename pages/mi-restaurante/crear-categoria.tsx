@@ -53,9 +53,9 @@ export default function CrearRestaurante() {
           schema: CategorySchema,
         });
 
-        mutate("/categories");
+        await mutate("/categories");
 
-        router.replace("/mi-restaurante");
+        router.push("/mi-restaurante");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {

@@ -62,7 +62,7 @@ export default function CrearRestaurante() {
           schema: DishAndCategoriesSchema,
         });
         if (mutateRestaurant !== undefined)
-          mutateRestaurant((restaurant) => {
+          await mutateRestaurant((restaurant) => {
             if (restaurant === undefined) return restaurant;
             if (restaurant.Dish.length === 0)
               return { ...restaurant, Dish: [dish] };
@@ -71,7 +71,7 @@ export default function CrearRestaurante() {
               dishes: [dish, ...restaurant.Dish],
             };
           });
-        router.replace("/mi-restaurante");
+        router.push("/mi-restaurante");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {

@@ -11,9 +11,10 @@ import {
   useEditRestaurantContext,
 } from "@/context/EditRestaurant";
 import { RestaurantAndDishes } from "@/types/RestaurantAndDishes";
-import { XMarkIcon } from "@heroicons/react/20/solid";
+import { useRouter } from "next/router";
 
 export default function MiRestaurante() {
+  const router = useRouter();
   const { isLoadingAccount, restaurant, isLoadingRestaurant } = useAdmin();
 
   if (isLoadingAccount || isLoadingRestaurant)
@@ -27,6 +28,10 @@ export default function MiRestaurante() {
         </main>
       </>
     );
+
+  if (!restaurant) {
+    router.push("/crear-restaurante");
+  }
 
   return (
     <EditRestaurantProvider>

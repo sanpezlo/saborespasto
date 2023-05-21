@@ -42,8 +42,8 @@ export default function IniciarSesion() {
           }),
           refresh: false,
         });
-        mutate("/accounts/self");
-        router.replace("/");
+        await mutate("/accounts/self");
+        router.push("/");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {

@@ -10,7 +10,7 @@ export function useGuest() {
   useEffect(() => {
     if (isLoadingAccount) return;
     if (account) {
-      router.replace("/");
+      router.push("/");
       return;
     }
   }, [isLoadingAccount, account, router]);

@@ -9,7 +9,7 @@ export function useNoAdmin({ redirectTo = "/404" }: { redirectTo?: string }) {
   useEffect(() => {
     if (isLoadingAccount) return;
     if (account && account.admin) {
-      router.replace(redirectTo);
+      router.push(redirectTo);
       return;
     }
   });
