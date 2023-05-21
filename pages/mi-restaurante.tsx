@@ -12,6 +12,7 @@ import {
 } from "@/context/EditRestaurant";
 import { RestaurantAndDishes } from "@/types/RestaurantAndDishes";
 import { useRouter } from "next/router";
+import { DeleteDishProvider } from "@/context/DeleteDish";
 
 export default function MiRestaurante() {
   const router = useRouter();

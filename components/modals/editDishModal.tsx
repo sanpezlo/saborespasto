@@ -15,6 +15,7 @@ import { useErrorContext } from "@/context/Error";
 import { useNotificationContext } from "@/context/Notification";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 import { UpdateDish, UpdateDishSchema } from "@/types/Dish";
+import { DeleteDishProvider, useDeleteDishContext } from "@/context/DeleteDish";
 
 export interface EditDishModalProps {
   dish: DishAndCategories;
@@ -29,124 +30,126 @@ export default function EditDishModal({
 
   return (
     <>
-      <Transition.Root show={open} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-10"
-          onClose={() => {
-            onClose();
-            setOpen(false);
-          }}
-        >
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+      <DeleteDishProvider>
+        <Transition.Root show={open} as={Fragment}>
+          <Dialog
+            as="div"
+            className="relative z-10"
+            onClose={() => {
+              onClose();
+              setOpen(false);
+            }}
           >
-            <div className="fixed inset-0 hidden bg-gray-500 bg-opacity-75 transition-opacity md:block" />
-          </Transition.Child>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="fixed inset-0 hidden bg-gray-500 bg-opacity-75 transition-opacity md:block" />
+            </Transition.Child>
 
-          <div className="fixed inset-0 z-10 overflow-y-auto">
-            <div className="flex min-h-full items-stretch justify-center text-center md:items-center md:px-2 lg:px-4">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
-                enterTo="opacity-100 translate-y-0 md:scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 translate-y-0 md:scale-100"
-                leaveTo="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
-              >
-                <Dialog.Panel className="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-4xl">
-                  <div className="relative flex w-full items-center overflow-hidden bg-white px-4 pb-8 pt-14 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
-                    <button
-                      type="button"
-                      className="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
-                      onClick={() => {
-                        onClose();
-                        setOpen(false);
-                      }}
-                    >
-                      <span className="sr-only">Cerrar</span>
-                      <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
+            <div className="fixed inset-0 z-10 overflow-y-auto">
+              <div className="flex min-h-full items-stretch justify-center text-center md:items-center md:px-2 lg:px-4">
+                <Transition.Child
+                  as={Fragment}
+                  enter="ease-out duration-300"
+                  enterFrom="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
+                  enterTo="opacity-100 translate-y-0 md:scale-100"
+                  leave="ease-in duration-200"
+                  leaveFrom="opacity-100 translate-y-0 md:scale-100"
+                  leaveTo="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
+                >
+                  <Dialog.Panel className="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-4xl">
+                    <div className="relative flex w-full items-center overflow-hidden bg-white px-4 pb-8 pt-14 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
+                      <button
+                        type="button"
+                        className="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
+                        onClick={() => {
+                          onClose();
+                          setOpen(false);
+                        }}
+                      >
+                        <span className="sr-only">Cerrar</span>
+                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                      </button>
 
-                    <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8">
-                      <div className="sm:col-span-4 lg:col-span-5">
-                        <div className="aspect-h-3 aspect-w-2 overflow-hidden rounded-lg bg-gray-100">
-                          <img
-                            src={dish.image}
-                            alt={""}
-                            className="object-cover object-center"
+                      <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8">
+                        <div className="sm:col-span-4 lg:col-span-5">
+                          <div className="aspect-h-3 aspect-w-2 overflow-hidden rounded-lg bg-gray-100">
+                            <img
+                              src={dish.image}
+                              alt={""}
+                              className="object-cover object-center"
+                            />
+                          </div>
+
+                          <Categories
+                            dish={dish}
+                            setOpen={setOpen}
+                            onClose={onClose}
                           />
                         </div>
+                        <div className="sm:col-span-8 lg:col-span-7">
+                          <h2 className="text-2xl font-bold text-gray-900 sm:pr-12">
+                            {dish.name}
+                          </h2>
+                          <section
+                            aria-labelledby="information-heading"
+                            className="mt-2 border-b border-gray-200 pb-6"
+                          >
+                            <h3 id="information-heading" className="sr-only">
+                              Información del plato
+                            </h3>
 
-                        <Categories
-                          dish={dish}
-                          setOpen={setOpen}
-                          onClose={onClose}
-                        />
-                      </div>
-                      <div className="sm:col-span-8 lg:col-span-7">
-                        <h2 className="text-2xl font-bold text-gray-900 sm:pr-12">
-                          {dish.name}
-                        </h2>
-                        <section
-                          aria-labelledby="information-heading"
-                          className="mt-2 border-b border-gray-200 pb-6"
-                        >
-                          <h3 id="information-heading" className="sr-only">
-                            Información del plato
-                          </h3>
+                            <p className="text-2xl text-gray-900">
+                              ${dish.new_price.toLocaleString("es-Co")}
+                            </p>
 
-                          <p className="text-2xl text-gray-900">
-                            ${dish.new_price.toLocaleString("es-Co")}
-                          </p>
-
-                          <div className="mt-6">
-                            <h4 className="sr-only">Comentarios</h4>
-                            <div className="flex items-center">
+                            <div className="mt-6">
+                              <h4 className="sr-only">Comentarios</h4>
                               <div className="flex items-center">
-                                {[0, 1, 2, 3, 4].map((rating) => (
-                                  <StarIcon
-                                    key={rating}
-                                    className={`${
-                                      3.9 > rating
-                                        ? "text-gray-900"
-                                        : "text-gray-200"
-                                    } h-5 w-5 flex-shrink-0`}
-                                    aria-hidden="true"
-                                  />
-                                ))}
+                                <div className="flex items-center">
+                                  {[0, 1, 2, 3, 4].map((rating) => (
+                                    <StarIcon
+                                      key={rating}
+                                      className={`${
+                                        3.9 > rating
+                                          ? "text-gray-900"
+                                          : "text-gray-200"
+                                      } h-5 w-5 flex-shrink-0`}
+                                      aria-hidden="true"
+                                    />
+                                  ))}
+                                </div>
+                                <p className="sr-only">{3.9} de 5 estrellas</p>
+                                <a
+                                  href="#"
+                                  className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                                >
+                                  10 Comentarios
+                                </a>
                               </div>
-                              <p className="sr-only">{3.9} de 5 estrellas</p>
-                              <a
-                                href="#"
-                                className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                              >
-                                10 Comentarios
-                              </a>
                             </div>
-                          </div>
-                        </section>
-                        <EditDish
-                          dish={dish}
-                          setOpen={setOpen}
-                          onClose={onClose}
-                        />
+                          </section>
+                          <EditDish
+                            dish={dish}
+                            setOpen={setOpen}
+                            onClose={onClose}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
             </div>
-          </div>
-        </Dialog>
-      </Transition.Root>
+          </Dialog>
+        </Transition.Root>
+      </DeleteDishProvider>
     </>
   );
 }
@@ -333,6 +336,7 @@ function EditDish({
   const { setLoadingModal } = useLoadingContext();
   const { setErrorModal } = useErrorContext();
   const { setNotification } = useNotificationContext();
+  const { setDeleteDishModal } = useDeleteDishContext();
 
   const [form, setForm] = useState<UpdateDish>({
     id: dish.id,
@@ -366,7 +370,7 @@ function EditDish({
           description: "Tu plato ha sido editado exitosamente",
         });
 
-        mutate("/restaurants/dishes/self");
+        await mutate("/restaurants/dishes/self");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {
@@ -563,6 +567,21 @@ function EditDish({
         </div>
 
         <div className="my-6 flex items-center justify-end gap-x-6">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              setDeleteDishModal({
+                dishId: dish.id,
+                onSuccessfulDelete: () => {
+                  setOpen(false);
+                  onClose();
+                },
+              });
+            }}
+            className="rounded-md bg-red-500 hover:bg-red-400 px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            Borrar
+          </button>
           <button
             type="submit"
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

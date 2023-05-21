@@ -24,6 +24,9 @@ async function getRestaurant(
             },
           },
         },
+        where: {
+          deletedAt: null,
+        },
       },
     },
   });
