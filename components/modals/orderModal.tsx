@@ -235,9 +235,10 @@ export default function OrderModal({
                                       </h3>
                                       <p className="ml-4">
                                         $
-                                        {product.dish.new_price.toLocaleString(
-                                          "es-Co"
-                                        )}
+                                        {(
+                                          product.dish.new_price *
+                                          product.quantity
+                                        ).toLocaleString("es-Co")}
                                       </p>
                                     </div>
                                     <p className="mt-1 text-sm text-gray-500">

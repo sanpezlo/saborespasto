@@ -15,11 +15,15 @@ import {
   RestaurantAndDishes,
   RestaurantAndDishesSchema,
 } from "@/types/RestaurantAndDishes";
+import {
+  AccountAndFavorites,
+  AccountAndFavoritesSchema,
+} from "@/types/AccountAndFavorites";
 
 type AuthenticationContext = {
-  account?: Account;
+  account?: AccountAndFavorites;
   isLoadingAccount: boolean;
-  mutateAccount: Dispatch<SetStateAction<Account | undefined>>;
+  mutateAccount: Dispatch<SetStateAction<AccountAndFavorites | undefined>>;
   restaurant?: RestaurantAndDishes;
   isLoadingRestaurant: boolean;
   mutateRestaurant?: Dispatch<SetStateAction<RestaurantAndDishes | undefined>>;
@@ -42,9 +46,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     data: account,
     isLoading: isLoadingAccount,
     mutate: mutateAccount,
-  } = useSWRImmutable<Account, ErrorResponse>(
-    "/accounts/self",
-    apiFetcherSWR({ schema: AccountSchema }),
+  } = useSWRImmutable<AccountAndFavorites, ErrorResponse>(
+    "/accounts/favorites/self",
+    apiFetcherSWR({ schema: AccountAndFavoritesSchema }),
     {
       shouldRetryOnError: false,
     }

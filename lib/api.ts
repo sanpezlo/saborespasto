@@ -41,7 +41,6 @@ export function apiHandler(handler: ApiMethodHandlers) {
 }
 
 function errorHandler(err: unknown, res: NextApiResponse<ErrorResponse>) {
-  console.error(err);
   if (createHttpError.isHttpError(err) && err.expose) {
     return res
       .status(err.statusCode)

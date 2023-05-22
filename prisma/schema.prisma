@@ -11,39 +11,41 @@ datasource db {
 }
 
 model Account {
-  id               String             @id @default(uuid())
-  name             String
-  email            String             @unique
-  password         String
-  address          String?
-  phone            String?
-  admin            Boolean            @default(false)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  deletedAt        DateTime?
-  restaurant       Restaurant?
-  Order            Order[]
-  RestaurantReview RestaurantReview[]
-  DishReview       DishReview[]
+  id                 String               @id @default(uuid())
+  name               String
+  email              String               @unique
+  password           String
+  address            String?
+  phone              String?
+  admin              Boolean              @default(false)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  deletedAt          DateTime?
+  restaurant         Restaurant?
+  Order              Order[]
+  RestaurantReview   RestaurantReview[]
+  DishReview         DishReview[]
+  FavoriteRestaurant FavoriteRestaurant[]
 }
 
 model Restaurant {
-  id               String             @id @default(uuid())
-  name             String
-  description      String
-  slug             String             @unique
-  address          String
-  phone            String
-  image            String
-  admin            Account            @relation(fields: [adminId], references: [id])
-  adminId          String             @unique
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  deletedAt        DateTime?
-  Dish             Dish[]
-  Order            Order[]
-  RestaurantReview RestaurantReview[]
-  rating           Float              @default(0)
+  id                 String               @id @default(uuid())
+  name               String
+  description        String
+  slug               String               @unique
+  address            String
+  phone              String
+  image              String
+  admin              Account              @relation(fields: [adminId], references: [id])
+  adminId            String               @unique
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  deletedAt          DateTime?
+  Dish               Dish[]
+  Order              Order[]
+  RestaurantReview   RestaurantReview[]
+  rating             Float                @default(0)
+  FavoriteRestaurant FavoriteRestaurant[]
 }
 
 model Dish {
@@ -144,4 +146,17 @@ model DishReview {
   deletedAt DateTime?
 
   @@unique([accountId, dishId])
+}
+
+model FavoriteRestaurant {
+  id           String     @id @default(uuid())
+  accountId    String
+  account      Account    @relation(fields: [accountId], references: [id])
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+
+  @@unique([accountId, restaurantId])
 }

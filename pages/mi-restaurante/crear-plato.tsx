@@ -192,7 +192,6 @@ export default function CrearRestaurante() {
                       name="description"
                       rows={3}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      defaultValue={""}
                       placeholder="Una hamburguesa de ternera a la parrilla, con tomate, lechuga fresca, mayonesa, pepinillos, un toque de ketchup y cebollas en rodajas en un panecillo suave con semillas de sésamo."
                       required
                       value={form.description}
