@@ -1,7 +1,7 @@
 import Head from "next/head";
 
 import Loading from "@/components/loading";
-import { useUser } from "@/hooks/user";
+import { useNoGuest } from "@/hooks/noGuest";
 import {
   EditAccountProvider,
   useEditAccountContext,
@@ -9,7 +9,7 @@ import {
 import { Account } from "@/types/Account";
 
 export default function MiRestaurante() {
-  const { isLoadingAccount, account } = useUser();
+  const { isLoadingAccount, account } = useNoGuest();
 
   if (isLoadingAccount)
     return (

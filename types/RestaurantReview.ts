@@ -37,13 +37,14 @@ export const CreateRestaurantReviewSchema = z.object({
     .max(5, {
       message: "La calificación debe ser máximo 5",
     }),
-  restaurantId: z
+  slug: z
     .string({
-      required_error: "El id del restaurante es requerido",
-      invalid_type_error: "El id del restaurante debe ser una cadena de texto",
+      required_error: "El slug es requerido",
+      invalid_type_error: "El slug debe ser una cadena de texto",
     })
-    .uuid({
-      message: "El id del restaurante debe ser un UUID válido",
+    .regex(new RegExp("^[a-z0-9]+(?:-[a-z0-9]+)*$"), {
+      message:
+        "El slug debe ser una cadena de texto en minúsculas y sin espacios",
     }),
 });
 

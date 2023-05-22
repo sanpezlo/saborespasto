@@ -61,7 +61,7 @@ export default function Home() {
         <title> Sabores Pasto - Inicio </title>
       </Head>
       <main className="mt-10">
-        {restaurants && (
+        {restaurants && restaurants.length > 0 && (
           <div className="max-w-[1400px] h-[780px] w-full m-auto py-16 px-10 relative group">
             <div
               style={{

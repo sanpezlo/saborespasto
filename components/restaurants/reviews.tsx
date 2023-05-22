@@ -1,5 +1,5 @@
 import { FormEvent, useCallback, useState } from "react";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 import {
   RestaurantReviewAndAccount,
@@ -117,19 +117,19 @@ export function Reviews({
               ))}
           </div>
         ))}
-      {!isAdmin && account && <FormReview restaurantId={slug} />}
+      {!isAdmin && account && <FormReview slug={slug} />}
     </div>
   );
 }
 
-function FormReview({ restaurantId }: { restaurantId: string }) {
+function FormReview({ slug }: { slug: string }) {
   const { setLoadingModal } = useLoadingContext();
   const { setErrorModal } = useErrorContext();
 
   const [review, setReview] = useState<CreateRestaurantReview>({
     comment: "",
     rating: 0,
-    restaurantId: "",
+    slug: slug,
   });
 
   const handleCreateRestaurantReview = useCallback(
@@ -139,7 +139,7 @@ function FormReview({ restaurantId }: { restaurantId: string }) {
       try {
         const createRestaurantReview = CreateRestaurantReviewSchema.parse({
           ...review,
-          restaurantId: restaurantId,
+          slug: slug,
         });
 
         await apiFetcher("/reviews/restaurants", {
@@ -148,14 +148,14 @@ function FormReview({ restaurantId }: { restaurantId: string }) {
           schema: RestaurantReviewSchema,
         });
 
-        setReview({ comment: "", rating: 0, restaurantId: "" });
+        setReview({ comment: "", rating: 0, slug: "" });
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {
         setLoadingModal(null);
       }
     },
-    [setErrorModal, setLoadingModal, restaurantId, review]
+    [setLoadingModal, review, slug, setErrorModal]
   );
 
   return (

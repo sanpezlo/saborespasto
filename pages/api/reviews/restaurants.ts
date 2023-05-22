@@ -16,11 +16,12 @@ async function createRestaurantReview(
 ) {
   const account = JSON.parse(req.headers.account as string) as Account;
 
-  const createRestaurantReview = CreateRestaurantReviewSchema.parse(req.body);
+  const { slug, ...createRestaurantReview } =
+    CreateRestaurantReviewSchema.parse(req.body);
 
   const restaurant = await prisma.restaurant.findUnique({
     where: {
-      id: createRestaurantReview.restaurantId,
+      slug: slug,
     },
     include: {
       RestaurantReview: true,
@@ -33,7 +34,7 @@ async function createRestaurantReview(
 
   const restaurantReviewExists = await prisma.restaurantReview.findFirst({
     where: {
-      restaurantId: createRestaurantReview.restaurantId,
+      restaurantId: restaurant.id,
       accountId: account.id,
     },
   });
@@ -45,6 +46,7 @@ async function createRestaurantReview(
   const restaurantReview = await prisma.restaurantReview.create({
     data: {
       ...createRestaurantReview,
+      restaurantId: restaurant.id,
       accountId: account.id,
     },
   });
@@ -58,7 +60,7 @@ async function createRestaurantReview(
 
   await prisma.restaurant.update({
     where: {
-      id: createRestaurantReview.restaurantId,
+      id: restaurant.id,
     },
     data: {
       rating: rating / (restaurant.RestaurantReview.length + 1),
