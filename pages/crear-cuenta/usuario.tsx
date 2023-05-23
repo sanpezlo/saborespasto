@@ -18,6 +18,10 @@ import { useGuest } from "@/hooks/guest";
 import { useAuthContext } from "@/context/Auth";
 import { useLoadingContext } from "@/context/Loading";
 import { useErrorContext } from "@/context/Error";
+import {
+  AccountAndFavorites,
+  AccountAndFavoritesSchema,
+} from "@/types/AccountAndFavorites";
 
 export default function CrearCuentaUsuario() {
   const router = useRouter();
@@ -44,11 +48,14 @@ export default function CrearCuentaUsuario() {
       try {
         e.preventDefault();
         const createAccount = CreateAccountSchema.parse(form);
-        const { data: account } = await apiFetcher<Account>("/accounts", {
-          method: "POST",
-          body: JSON.stringify(createAccount),
-          schema: AccountSchema,
-        });
+        const { data: account } = await apiFetcher<AccountAndFavorites>(
+          "/accounts",
+          {
+            method: "POST",
+            body: JSON.stringify(createAccount),
+            schema: AccountAndFavoritesSchema,
+          }
+        );
 
         setLoadingModal({
           title: "Iniciando sesión...",

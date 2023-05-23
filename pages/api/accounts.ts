@@ -1,15 +1,16 @@
 import createHttpError from "http-errors";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { Account, CreateAccountSchema } from "@/types/Account";
+import { CreateAccountSchema } from "@/types/Account";
 import { apiHandler } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
 import { genSalt, hash } from "bcrypt";
 import { prisma } from "@/lib/db";
+import { AccountAndFavorites } from "@/types/AccountAndFavorites";
 
 async function createAccount(
   req: NextApiRequest,
-  res: NextApiResponse<Account | ErrorResponse>
+  res: NextApiResponse<AccountAndFavorites | ErrorResponse>
 ) {
   const createAccount = CreateAccountSchema.parse(req.body);
   const current_account = await prisma.account.findUnique({
@@ -30,6 +31,9 @@ async function createAccount(
     data: {
       ...createAccount,
       password: hashedPassword,
+    },
+    include: {
+      FavoriteRestaurant: true,
     },
   });
 

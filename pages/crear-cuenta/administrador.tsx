@@ -4,12 +4,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 
 import { apiFetcher } from "@/lib/fetcher";
 import { handleErrorModal } from "@/lib/error";
-import {
-  Account,
-  AccountSchema,
-  CreateAccount,
-  CreateAccountSchema,
-} from "@/types/Account";
+import { CreateAccount, CreateAccountSchema } from "@/types/Account";
 import Head from "next/head";
 import { useAuthContext } from "@/context/Auth";
 import { AuthResponse } from "@/types/AuthResponse";
@@ -18,6 +13,10 @@ import Loading from "@/components/loading";
 import { useGuest } from "@/hooks/guest";
 import { useLoadingContext } from "@/context/Loading";
 import { useErrorContext } from "@/context/Error";
+import {
+  AccountAndFavorites,
+  AccountAndFavoritesSchema,
+} from "@/types/AccountAndFavorites";
 
 export default function CrearCuentaAdministrador() {
   const router = useRouter();
@@ -44,11 +43,14 @@ export default function CrearCuentaAdministrador() {
       try {
         e.preventDefault();
         const createAccount = CreateAccountSchema.parse(form);
-        const { data: account } = await apiFetcher<Account>("/accounts", {
-          method: "POST",
-          body: JSON.stringify(createAccount),
-          schema: AccountSchema,
-        });
+        const { data: account } = await apiFetcher<AccountAndFavorites>(
+          "/accounts",
+          {
+            method: "POST",
+            body: JSON.stringify(createAccount),
+            schema: AccountAndFavoritesSchema,
+          }
+        );
 
         setLoadingModal({
           title: "Iniciando sesión...",
