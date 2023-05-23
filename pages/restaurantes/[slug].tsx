@@ -74,17 +74,19 @@ export default function MiRestaurante() {
                   <div className="lg:max-w-lg">
                     <h1 className="font text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
                       {restaurant?.name}
-                      <button
-                        onClick={handleAddToFavorite}
-                        className={`inline-flex items-center justify-center ${
-                          favorite
-                            ? "text-red-500"
-                            : "text-gray-200 hover:text-red-200"
-                        }`}
-                        disabled={favorite}
-                      >
-                        <HeartIcon className="ml-4 inline h-10 w-10" />
-                      </button>
+                      {account && (
+                        <button
+                          onClick={handleAddToFavorite}
+                          className={`inline-flex items-center justify-center ${
+                            favorite
+                              ? "text-red-500"
+                              : "text-gray-200 hover:text-red-200"
+                          }`}
+                          disabled={favorite}
+                        >
+                          <HeartIcon className="ml-4 inline h-10 w-10" />
+                        </button>
+                      )}
                     </h1>
 
                     <p className="my-4 text-xl text-gray-500">
