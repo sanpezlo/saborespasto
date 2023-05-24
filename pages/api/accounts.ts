@@ -33,7 +33,11 @@ async function createAccount(
       password: hashedPassword,
     },
     include: {
-      FavoriteRestaurant: true,
+      FavoriteRestaurant: {
+        include: {
+          restaurant: true,
+        },
+      },
     },
   });
 

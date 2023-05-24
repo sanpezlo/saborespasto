@@ -19,7 +19,11 @@ async function self(
       id: account.id,
     },
     include: {
-      FavoriteRestaurant: true,
+      FavoriteRestaurant: {
+        include: {
+          restaurant: true,
+        },
+      },
     },
   });
 

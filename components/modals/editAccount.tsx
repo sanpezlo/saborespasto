@@ -58,7 +58,7 @@ export default function EditAccountModal({
           title: "Cuenta actualizada",
           description: "La cuenta se ha actualizado correctamente",
         });
-        await mutate("/accounts/self");
+        await mutate("/accounts/favorites/self");
       } catch (error) {
         handleErrorModal(error, setErrorModal);
       } finally {

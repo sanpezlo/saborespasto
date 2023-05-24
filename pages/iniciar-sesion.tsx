@@ -42,7 +42,7 @@ export default function IniciarSesion() {
           }),
           refresh: false,
         });
-        await mutate("/accounts/self");
+        await mutate("/accounts/favorites/self");
         router.push("/");
       } catch (error) {
         handleErrorModal(error, setErrorModal);

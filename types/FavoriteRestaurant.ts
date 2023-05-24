@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { RestaurantSchema } from "./Restaurant";
 
 export const FavoriteRestaurantSchema = z.object({
   id: z.string(),
@@ -9,8 +10,21 @@ export const FavoriteRestaurantSchema = z.object({
   deletedAt: z.string().datetime().or(z.date()).nullable(),
 });
 
+export const FavoriteRestaurantAndRestaurantSchema =
+  FavoriteRestaurantSchema.extend({
+    restaurant: RestaurantSchema,
+  });
+
 export const FavoriteRestaurantsSchema = z.array(FavoriteRestaurantSchema);
 
+export const FavoriteRestaurantsAndRestaurantsSchema = z.array(
+  FavoriteRestaurantAndRestaurantSchema
+);
+
 export type FavoriteRestaurant = z.infer<typeof FavoriteRestaurantSchema>;
+
+export type FavoriteRestaurantAndRestaurant = z.infer<
+  typeof FavoriteRestaurantAndRestaurantSchema
+>;
 
 export type FavoriteRestaurants = z.infer<typeof FavoriteRestaurantsSchema>;
