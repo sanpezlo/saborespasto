@@ -26,6 +26,7 @@ model Account {
   RestaurantReview   RestaurantReview[]
   DishReview         DishReview[]
   FavoriteRestaurant FavoriteRestaurant[]
+  FavoriteDish       FavoriteDish[]
 }
 
 model Restaurant {
@@ -64,6 +65,7 @@ model Dish {
   CategoriesInDishes CategoriesInDishes[]
   DishReview         DishReview[]
   rating             Float                @default(0)
+  FavoriteDish       FavoriteDish[]
 }
 
 model Order {
@@ -159,4 +161,17 @@ model FavoriteRestaurant {
   deletedAt    DateTime?
 
   @@unique([accountId, restaurantId])
+}
+
+model FavoriteDish {
+  id        String    @id @default(uuid())
+  accountId String
+  account   Account   @relation(fields: [accountId], references: [id])
+  dishId    String
+  dish      Dish      @relation(fields: [dishId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@unique([accountId, dishId])
 }

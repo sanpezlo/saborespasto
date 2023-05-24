@@ -2,6 +2,8 @@ import { FormEvent, Fragment, useCallback, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/20/solid";
+import { HeartIcon } from "@heroicons/react/24/solid";
+
 import { Dish } from "@/types/Dish";
 import {
   CreateDishReview,
@@ -15,6 +17,8 @@ import { handleErrorModal } from "@/lib/error";
 import { useNotificationContext } from "@/context/Notification";
 import { useShoppingCartContext } from "@/context/ShoppingCart";
 import { useAuthContext } from "@/context/Auth";
+import { useFavoriteDish } from "@/hooks/favoriteDish";
+import { Account } from "@/types/Account";
 
 export interface QuickviewsModalProps {
   dish: Dish;
@@ -144,6 +148,8 @@ export default function QuickviewsModal({
                           alt={dish.name}
                           className="object-cover object-center"
                         />
+
+                        <FavoriteButton dish={dish} />
                       </div>
                       <div className="sm:col-span-8 lg:col-span-7">
                         <h2 className="text-2xl font-bold text-gray-900 sm:pr-12">
@@ -321,6 +327,33 @@ export default function QuickviewsModal({
           </div>
         </Dialog>
       </Transition.Root>
+    </>
+  );
+}
+
+function FavoriteButton({ dish }: { dish: Dish | undefined }) {
+  const { account } = useAuthContext();
+
+  const { handleAddToFavorite, favorite } = useFavoriteDish({
+    dish,
+    account,
+  });
+
+  return (
+    <>
+      {account && (
+        <button
+          onClick={handleAddToFavorite}
+          className={`inline-flex items-center justify-center rounded-lg ${
+            favorite
+              ? "bg-white bg-opacity-50 text-red-600"
+              : "text-transparent hover:text-red-600 hover:bg-white hover:bg-opacity-50"
+          }`}
+          disabled={favorite}
+        >
+          <HeartIcon className="h-10 w-10" />
+        </button>
+      )}
     </>
   );
 }

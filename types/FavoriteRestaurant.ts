@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { RestaurantSchema } from "./Restaurant";
+
+import { RestaurantSchema } from "@/types/Restaurant";
 
 export const FavoriteRestaurantSchema = z.object({
   id: z.string(),

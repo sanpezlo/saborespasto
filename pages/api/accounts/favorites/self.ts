@@ -24,6 +24,11 @@ async function self(
           restaurant: true,
         },
       },
+      FavoriteDish: {
+        include: {
+          dish: true,
+        },
+      },
     },
   });
 

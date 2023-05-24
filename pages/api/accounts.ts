@@ -38,6 +38,11 @@ async function createAccount(
           restaurant: true,
         },
       },
+      FavoriteDish: {
+        include: {
+          dish: true,
+        },
+      },
     },
   });
 
