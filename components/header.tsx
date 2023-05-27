@@ -144,18 +144,30 @@ export default function Header() {
                 </Link>
                 <Link
                   href="/mi-cuenta"
-                  className="text-sm font-semibold leading-6 text-gray-900"
+                  className="text-sm font-semibold leading-6 text-gray-900 mr-4"
                 >
                   Mi cuenta
+                </Link>
+                <Link
+                  href="/cerrar-sesion"
+                  className="text-sm font-semibold leading-6 text-gray-900"
+                >
+                  Cerrar sesión
                 </Link>
               </>
             ) : (
               <>
                 <Link
                   href="/mi-cuenta"
-                  className="text-sm font-semibold leading-6 text-gray-900"
+                  className="text-sm font-semibold leading-6 text-gray-900 mr-4"
                 >
                   Mi cuenta
+                </Link>
+                <Link
+                  href="/cerrar-sesion"
+                  className="text-sm font-semibold leading-6 text-gray-900"
+                >
+                  Cerrar sesión
                 </Link>
               </>
             )
@@ -282,6 +294,12 @@ export default function Header() {
                       >
                         Mi cuenta
                       </Link>
+                      <Link
+                        href="/cerrar-sesion"
+                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      >
+                        Cerrar sesión
+                      </Link>
                     </>
                   ) : (
                     <>
@@ -290,6 +308,12 @@ export default function Header() {
                         className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                       >
                         Mi cuenta
+                      </Link>
+                      <Link
+                        href="/cerrar-sesion"
+                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      >
+                        Cerrar sesión
                       </Link>
                     </>
                   )

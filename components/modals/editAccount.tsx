@@ -8,9 +8,7 @@ import { useLoadingContext } from "@/context/Loading";
 import { handleErrorModal } from "@/lib/error";
 import { useErrorContext } from "@/context/Error";
 import { useNotificationContext } from "@/context/Notification";
-import { PhotoIcon } from "@heroicons/react/24/solid";
 import { Account, UpdateAccount, UpdateAccountSchema } from "@/types/Account";
-import { Signin } from "@/types/Signin";
 
 export interface EditAccountModalProps {
   account: Account;
