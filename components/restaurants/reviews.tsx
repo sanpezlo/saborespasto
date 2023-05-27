@@ -14,6 +14,7 @@ import { useErrorContext } from "@/context/Error";
 import {
   CreateRestaurantReview,
   CreateRestaurantReviewSchema,
+  DeleteRestaurantReviewSchema,
   RestaurantReview,
   RestaurantReviewSchema,
   UpdateRestaurantReview,
@@ -144,8 +145,11 @@ export function Reviews({
 }
 
 function FormReview({ slug }: { slug: string }) {
+  const { mutate } = useSWRConfig();
+
   const { setLoadingModal } = useLoadingContext();
   const { setErrorModal } = useErrorContext();
+  const { setNotification } = useNotificationContext();
 
   const [review, setReview] = useState<CreateRestaurantReview>({
     comment: "",
@@ -169,6 +173,14 @@ function FormReview({ slug }: { slug: string }) {
           schema: RestaurantReviewSchema,
         });
 
+        await mutate(`/restaurants/dishes/${slug}`);
+        await mutate("/accounts/favorites/self");
+
+        setNotification({
+          title: "Comentario publicado",
+          description: "Tu comentario ha sido publicado exitosamente",
+        });
+
         setReview({ comment: "", rating: 0, slug: "" });
       } catch (error) {
         handleErrorModal(error, setErrorModal);
@@ -176,7 +188,7 @@ function FormReview({ slug }: { slug: string }) {
         setLoadingModal(null);
       }
     },
-    [setLoadingModal, review, slug, setErrorModal]
+    [setLoadingModal, review, slug, mutate, setNotification, setErrorModal]
   );
 
   return (
@@ -282,7 +294,7 @@ function FormUpdateReview({
     id: restaurantReview.id,
   });
 
-  const handleCreateRestaurantReview = useCallback(
+  const handleUpdateRestaurantReview = useCallback(
     async (e: FormEvent) => {
       e.preventDefault();
       setLoadingModal({ title: "Actualizando comentario..." });
@@ -312,10 +324,36 @@ function FormUpdateReview({
     [setLoadingModal, review, mutate, slug, setNotification, setErrorModal]
   );
 
+  const handleDeleteRestaurantReview = useCallback(async () => {
+    setLoadingModal({ title: "Eliminando comentario..." });
+    try {
+      const deleteRestaurantReview = DeleteRestaurantReviewSchema.parse({
+        id: review.id,
+      });
+
+      await apiFetcher("/reviews/restaurants", {
+        method: "PATCH",
+        body: JSON.stringify(deleteRestaurantReview),
+      });
+
+      await mutate(`/restaurants/dishes/${slug}`);
+      await mutate("/accounts/favorites/self");
+
+      setNotification({
+        title: "Comentario eliminado",
+        description: "Tu comentario ha sido eliminado correctamente",
+      });
+    } catch (error) {
+      handleErrorModal(error, setErrorModal);
+    } finally {
+      setLoadingModal(null);
+    }
+  }, [setLoadingModal, review, mutate, slug, setNotification, setErrorModal]);
+
   return (
     <div className={"pb-2 mb-4"}>
       <form
-        onSubmit={handleCreateRestaurantReview}
+        onSubmit={handleUpdateRestaurantReview}
         className="mt-4 rounded-md bg-gray-100 p-4 border border-gray-200 shadow-sm"
       >
         <div className="space-y-2">
@@ -364,6 +402,15 @@ function FormUpdateReview({
             ))}
           </div>
           <div>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                handleDeleteRestaurantReview();
+              }}
+              className="mt-2 mr-2 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 "
+            >
+              Eliminar reseña
+            </button>
             <button
               type="submit"
               className="mt-2 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "

@@ -6,6 +6,7 @@ import { ErrorResponse } from "@/types/ErrorResponse";
 import { Account } from "@/types/Account";
 import {
   CreateRestaurantReviewSchema,
+  DeleteRestaurantReviewSchema,
   RestaurantReview,
   UpdateRestaurantReviewSchema,
 } from "@/types/RestaurantReview";
@@ -99,6 +100,45 @@ async function updateRestaurantReview(
   updateRestaurantRating(restaurantReview.restaurantId);
 }
 
+async function deleteRestaurantReview(
+  req: NextApiRequest,
+  res: NextApiResponse<{ success: true } | ErrorResponse>
+) {
+  const account = JSON.parse(req.headers.account as string) as Account;
+
+  const deleteRestaurantReview = DeleteRestaurantReviewSchema.parse(req.body);
+
+  const restaurantReview = await prisma.restaurantReview.findUnique({
+    where: {
+      id: deleteRestaurantReview.id,
+    },
+  });
+
+  if (!restaurantReview)
+    throw new createHttpError.NotFound("La reseña no existe");
+
+  if (restaurantReview.accountId !== account.id)
+    throw new createHttpError.Unauthorized(
+      "No tienes permiso para eliminar esta reseña"
+    );
+
+  await prisma.restaurantReview.delete({
+    where: {
+      id: deleteRestaurantReview.id,
+    },
+  });
+
+  res.status(200).json({ success: true });
+
+  updateRestaurantRating(restaurantReview.restaurantId);
+}
+
+export default apiHandler({
+  POST: withAuth(createRestaurantReview),
+  PUT: withAuth(updateRestaurantReview),
+  PATCH: withAuth(deleteRestaurantReview),
+});
+
 async function updateRestaurantRating(id: string) {
   const restaurant = await prisma.restaurant.findUnique({
     where: {
@@ -127,8 +167,3 @@ async function updateRestaurantRating(id: string) {
     },
   });
 }
-
-export default apiHandler({
-  POST: withAuth(createRestaurantReview),
-  PUT: withAuth(updateRestaurantReview),
-});

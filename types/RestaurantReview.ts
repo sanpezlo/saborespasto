@@ -84,6 +84,17 @@ export const UpdateRestaurantReviewSchema = z.object({
     }),
 });
 
+export const DeleteRestaurantReviewSchema = z.object({
+  id: z
+    .string({
+      required_error: "El id es requerido",
+      invalid_type_error: "El id debe ser una cadena de texto",
+    })
+    .uuid({
+      message: "El id debe ser un UUID válido",
+    }),
+});
+
 export type RestaurantReview = z.infer<typeof RestaurantReviewSchema>;
 
 export type CreateRestaurantReview = z.infer<
@@ -92,4 +103,8 @@ export type CreateRestaurantReview = z.infer<
 
 export type UpdateRestaurantReview = z.infer<
   typeof UpdateRestaurantReviewSchema
+>;
+
+export type DeleteRestaurantReview = z.infer<
+  typeof DeleteRestaurantReviewSchema
 >;
