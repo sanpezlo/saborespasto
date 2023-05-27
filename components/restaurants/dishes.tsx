@@ -77,13 +77,13 @@ export function Dishes({
                 <StarIcon
                   key={rating}
                   className={`${
-                    4 > rating ? "text-indigo-600" : "text-gray-200"
+                    dish.rating > rating ? "text-indigo-600" : "text-gray-200"
                   } h-5 w-5 flex-shrink-0`}
                   aria-hidden="true"
                 />
               ))}
               <p className="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                4.95 de 5
+                {dish.rating} de 5
               </p>
             </div>
           </div>

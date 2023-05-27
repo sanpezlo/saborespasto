@@ -149,9 +149,8 @@ async function updateRestaurantRating(id: string) {
     },
   });
 
-  if (!restaurant) {
+  if (!restaurant)
     throw new createHttpError.NotFound("El restaurante no existe");
-  }
 
   const rating = restaurant.RestaurantReview.reduce(
     (acc, restaurantReview) => acc + restaurantReview.rating,

@@ -19,9 +19,6 @@ async function createRestaurantReview(
     where: {
       id: createDishReview.dishId,
     },
-    include: {
-      DishReview: true,
-    },
   });
 
   if (!dish) {
@@ -48,21 +45,36 @@ async function createRestaurantReview(
 
   res.status(201).json(dishReview);
 
-  const rating = dish.DishReview.reduce(
-    (acc, dishReview) => acc + dishReview.rating,
-    createDishReview.rating
-  );
-
-  await prisma.dish.update({
-    where: {
-      id: createDishReview.dishId,
-    },
-    data: {
-      rating: rating / (dish.DishReview.length + 1),
-    },
-  });
+  updateDishRating(dish.id);
 }
 
 export default apiHandler({
   POST: withAuth(createRestaurantReview),
 });
+
+async function updateDishRating(id: string) {
+  const dish = await prisma.dish.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      DishReview: true,
+    },
+  });
+
+  if (!dish) throw new createHttpError.NotFound("El platillo no existe");
+
+  const rating = dish.DishReview.reduce(
+    (acc, dishReview) => acc + dishReview.rating,
+    0
+  );
+
+  await prisma.dish.update({
+    where: {
+      id: id,
+    },
+    data: {
+      rating: rating / dish.DishReview.length,
+    },
+  });
+}

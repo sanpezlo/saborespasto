@@ -30,6 +30,7 @@ async function self(
         },
       },
       RestaurantReview: true,
+      DishReview: true,
     },
   });
 

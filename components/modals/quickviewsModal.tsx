@@ -2,7 +2,8 @@ import { FormEvent, Fragment, useCallback, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/20/solid";
-import { HeartIcon } from "@heroicons/react/24/solid";
+import { HeartIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import useSWR, { useSWRConfig } from "swr";
 
 import { Dish } from "@/types/Dish";
 import {
@@ -10,7 +11,7 @@ import {
   CreateDishReviewSchema,
   DishReviewSchema,
 } from "@/types/DishReview";
-import { apiFetcher } from "@/lib/fetcher";
+import { apiFetcher, apiFetcherSWR } from "@/lib/fetcher";
 import { useLoadingContext } from "@/context/Loading";
 import { useErrorContext } from "@/context/Error";
 import { handleErrorModal } from "@/lib/error";
@@ -18,7 +19,11 @@ import { useNotificationContext } from "@/context/Notification";
 import { useShoppingCartContext } from "@/context/ShoppingCart";
 import { useAuthContext } from "@/context/Auth";
 import { useFavoriteDish } from "@/hooks/favoriteDish";
-import { Account } from "@/types/Account";
+import {
+  DishReviewAndAccount,
+  DishReviewsAndAccountSchema,
+} from "@/types/DishReviewAndAccount";
+import Loading from "@/components/loading";
 
 export interface QuickviewsModalProps {
   dish: Dish;
@@ -29,8 +34,27 @@ export default function QuickviewsModal({
   dish,
   onClose = () => {},
 }: QuickviewsModalProps) {
+  const { mutate } = useSWRConfig();
+
   const [open, setOpen] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [openReview, setOpenReview] = useState(false);
+
+  const { data: reviews, isLoading: isLoadingReviews } = useSWR<
+    DishReviewAndAccount[]
+  >(
+    () => (openReview ? `/reviews/dishes/${dish.id}` : null),
+    apiFetcherSWR({ schema: DishReviewsAndAccountSchema }),
+    {
+      shouldRetryOnError: false,
+      revalidateOnFocus: false,
+      refreshInterval: 0,
+      refreshWhenOffline: false,
+      refreshWhenHidden: false,
+      revalidateOnReconnect: false,
+      revalidateIfStale: false,
+    }
+  );
 
   const { account } = useAuthContext();
   const { setLoadingModal } = useLoadingContext();
@@ -80,6 +104,8 @@ export default function QuickviewsModal({
 
         setReview({ comment: "", rating: 0, dishId: dish.id });
 
+        await mutate("/accounts/favorites/self");
+
         setNotification({
           title: "Reseña publicada",
           description: "Tu reseña ha sido publicada con éxito",
@@ -90,7 +116,7 @@ export default function QuickviewsModal({
         setLoadingModal(null);
       }
     },
-    [setLoadingModal, review, dish.id, setNotification, setErrorModal]
+    [setLoadingModal, review, dish.id, mutate, setNotification, setErrorModal]
   );
 
   return (
@@ -176,7 +202,7 @@ export default function QuickviewsModal({
                                   <StarIcon
                                     key={rating}
                                     className={`${
-                                      3.9 > rating
+                                      dish.rating > rating
                                         ? "text-gray-900"
                                         : "text-gray-200"
                                     } h-5 w-5 flex-shrink-0`}
@@ -184,93 +210,143 @@ export default function QuickviewsModal({
                                   />
                                 ))}
                               </div>
-                              <p className="sr-only">{3.9} de 5 estrellas</p>
-                              <a
-                                href="#"
+                              <p className="sr-only">
+                                {dish.rating} de 5 estrellas
+                              </p>
+                              <button
                                 className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                                onClick={() => {
+                                  setOpenReview((prev) => !prev);
+                                }}
                               >
-                                10 Comentarios
-                              </a>
+                                {openReview
+                                  ? "Ocultar comentarios"
+                                  : "Ver comentarios"}
+                              </button>
                             </div>
 
-                            {account && (
-                              <div className="mt-4 rounded-md bg-gray-50 p-4 border border-gray-100 shadow-sm   focus-within:shadow focus-within:border-gray-200 hover:shadow hover:border-gray-200">
-                                <form onSubmit={handleReviewSubmit}>
-                                  <div className="space-y-2">
-                                    <div className="m-0">
-                                      <h5 className="sr-only">
-                                        Comparte tu reseña
-                                      </h5>
-                                      <div className="col-span-full">
-                                        <label
-                                          htmlFor="about"
-                                          className="block text-sm font-medium leading-6 text-gray-900"
-                                        >
-                                          Tu reseña
-                                        </label>
-                                        <div className="mt-2">
-                                          <textarea
-                                            id="about"
-                                            name="about"
-                                            rows={3}
-                                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                            required
-                                            onChange={(e) =>
-                                              setReview({
-                                                ...review,
-                                                comment: e.target.value,
-                                              })
-                                            }
-                                            value={review.comment}
-                                          />
-                                        </div>
-                                        <p className="mt-3 text-sm leading-6 text-gray-600">
-                                          Escriba una reseña detallada que
-                                          brinde información sobre su opinión
-                                          del plato.
-                                        </p>
-                                      </div>
-                                    </div>
-                                    <div className="flex items-end justify-between">
-                                      <div>
-                                        <h4 className="block text-sm font-medium leading-6 text-gray-900 mb-1">
-                                          Estrellas
-                                        </h4>
-                                        <div className="flex items-center">
-                                          <div className="flex items-center">
+                            {openReview &&
+                              (isLoadingReviews ? (
+                                <Loading />
+                              ) : (
+                                <div className="mt-4">
+                                  {reviews &&
+                                    reviews.map((review) => (
+                                      <div
+                                        key={review.id}
+                                        className="flex items-start"
+                                      >
+                                        <UserCircleIcon className="h-10 w-10 text-gray-600 mt-0" />
+                                        <div className="ml-1 w-full">
+                                          <span className="ml-2 text-sm font-medium text-gray-900">
+                                            {review.account.name}
+                                          </span>
+                                          <div className="mt-1 bg-gray-100 p-2 rounded-md text-sm text-gray-600">
+                                            <p>{review.comment}</p>
+                                          </div>
+                                          <div className="flex items-center my-2">
                                             {[0, 1, 2, 3, 4].map((rating) => (
                                               <StarIcon
                                                 key={rating}
                                                 className={`${
-                                                  review.rating > rating
-                                                    ? "text-indigo-600"
+                                                  (review.rating || 0) > rating
+                                                    ? "text-gray-600"
                                                     : "text-gray-200"
                                                 } h-5 w-5 flex-shrink-0`}
                                                 aria-hidden="true"
-                                                onClick={() =>
-                                                  setReview({
-                                                    ...review,
-                                                    rating: rating + 1,
-                                                  })
-                                                }
                                               />
                                             ))}
+                                            <p className="ml-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+                                              {review.rating || 0} de 5
+                                            </p>
                                           </div>
                                         </div>
                                       </div>
-                                      <div>
-                                        <button
-                                          type="submit"
-                                          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
-                                        >
-                                          Publicar reseña
-                                        </button>
+                                    ))}
+                                </div>
+                              ))}
+
+                            {account &&
+                              account.DishReview.every(
+                                (review) => review.dishId !== dish.id
+                              ) && (
+                                <div className="mt-4 rounded-md bg-gray-50 p-4 border border-gray-100 shadow-sm   focus-within:shadow focus-within:border-gray-200 hover:shadow hover:border-gray-200">
+                                  <form onSubmit={handleReviewSubmit}>
+                                    <div className="space-y-2">
+                                      <div className="m-0">
+                                        <h5 className="sr-only">
+                                          Comparte tu reseña
+                                        </h5>
+                                        <div className="col-span-full">
+                                          <label
+                                            htmlFor="about"
+                                            className="block text-sm font-medium leading-6 text-gray-900"
+                                          >
+                                            Tu reseña
+                                          </label>
+                                          <div className="mt-2">
+                                            <textarea
+                                              id="about"
+                                              name="about"
+                                              rows={3}
+                                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                              required
+                                              onChange={(e) =>
+                                                setReview({
+                                                  ...review,
+                                                  comment: e.target.value,
+                                                })
+                                              }
+                                              value={review.comment}
+                                            />
+                                          </div>
+                                          <p className="mt-3 text-sm leading-6 text-gray-600">
+                                            Escriba una reseña detallada que
+                                            brinde información sobre su opinión
+                                            del plato.
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-end justify-between">
+                                        <div>
+                                          <h4 className="block text-sm font-medium leading-6 text-gray-900 mb-1">
+                                            Estrellas
+                                          </h4>
+                                          <div className="flex items-center">
+                                            <div className="flex items-center">
+                                              {[0, 1, 2, 3, 4].map((rating) => (
+                                                <StarIcon
+                                                  key={rating}
+                                                  className={`${
+                                                    review.rating > rating
+                                                      ? "text-indigo-600"
+                                                      : "text-gray-200"
+                                                  } h-5 w-5 flex-shrink-0`}
+                                                  aria-hidden="true"
+                                                  onClick={() =>
+                                                    setReview({
+                                                      ...review,
+                                                      rating: rating + 1,
+                                                    })
+                                                  }
+                                                />
+                                              ))}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <button
+                                            type="submit"
+                                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+                                          >
+                                            Publicar reseña
+                                          </button>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                </form>
-                              </div>
-                            )}
+                                  </form>
+                                </div>
+                              )}
                           </div>
                         </section>
 

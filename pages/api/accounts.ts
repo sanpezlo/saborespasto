@@ -44,6 +44,7 @@ async function createAccount(
         },
       },
       RestaurantReview: true,
+      DishReview: true,
     },
   });
 
