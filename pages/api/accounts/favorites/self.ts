@@ -29,6 +29,7 @@ async function self(
           dish: true,
         },
       },
+      RestaurantReview: true,
     },
   });
 

@@ -37,6 +37,7 @@ model Restaurant {
   address            String
   phone              String
   image              String
+  isOnOffer          Boolean              @default(false)
   admin              Account              @relation(fields: [adminId], references: [id])
   adminId            String               @unique
   createdAt          DateTime             @default(now())

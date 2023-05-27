@@ -43,6 +43,7 @@ async function createAccount(
           dish: true,
         },
       },
+      RestaurantReview: true,
     },
   });
 

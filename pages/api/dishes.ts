@@ -111,13 +111,52 @@ async function updateDish(
     data: {
       name: updateDish.name,
       description: updateDish.description,
-      price: dish.new_price === updateDish.new_price ? null : dish.new_price,
+      price:
+        dish.new_price === updateDish.new_price ||
+        updateDish.new_price - dish.new_price > 0
+          ? null
+          : dish.new_price,
       new_price: updateDish.new_price,
       image: updateDish.image,
     },
   });
 
   res.status(200).json({ success: true });
+
+  const restaurantAndDishes = await prisma.restaurant.findUnique({
+    where: {
+      id: restaurant.id,
+    },
+    include: {
+      Dish: true,
+    },
+  });
+
+  if (!restaurantAndDishes)
+    throw new createHttpError.BadRequest("El restaurante no existe");
+
+  if (
+    restaurantAndDishes.isOnOffer &&
+    restaurantAndDishes.Dish.every((dish) => dish.price === null)
+  ) {
+    await prisma.restaurant.update({
+      where: {
+        id: restaurant.id,
+      },
+      data: {
+        isOnOffer: false,
+      },
+    });
+  } else if (restaurantAndDishes.Dish.some((dish) => dish.price !== null)) {
+    await prisma.restaurant.update({
+      where: {
+        id: restaurant.id,
+      },
+      data: {
+        isOnOffer: true,
+      },
+    });
+  }
 }
 
 export default apiHandler({

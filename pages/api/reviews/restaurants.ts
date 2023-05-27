@@ -7,6 +7,7 @@ import { Account } from "@/types/Account";
 import {
   CreateRestaurantReviewSchema,
   RestaurantReview,
+  UpdateRestaurantReviewSchema,
 } from "@/types/RestaurantReview";
 import { prisma } from "@/lib/db";
 
@@ -22,9 +23,6 @@ async function createRestaurantReview(
   const restaurant = await prisma.restaurant.findUnique({
     where: {
       slug: slug,
-    },
-    include: {
-      RestaurantReview: true,
     },
   });
 
@@ -53,9 +51,71 @@ async function createRestaurantReview(
 
   res.status(201).json(restaurantReview);
 
+  updateRestaurantRating(restaurant.id);
+}
+
+async function updateRestaurantReview(
+  req: NextApiRequest,
+  res: NextApiResponse<RestaurantReview | ErrorResponse>
+) {
+  const account = JSON.parse(req.headers.account as string) as Account;
+
+  const { id, ...updateRestaurantReview } = UpdateRestaurantReviewSchema.parse(
+    req.body
+  );
+
+  const restaurantReview = await prisma.restaurantReview.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      restaurant: {
+        include: {
+          RestaurantReview: true,
+        },
+      },
+    },
+  });
+
+  if (!restaurantReview) {
+    throw new createHttpError.NotFound("La reseña no existe");
+  }
+
+  if (restaurantReview.accountId !== account.id) {
+    throw new createHttpError.Unauthorized(
+      "No tienes permiso para actualizar esta reseña"
+    );
+  }
+
+  const updatedRestaurantReview = await prisma.restaurantReview.update({
+    where: {
+      id: id,
+    },
+    data: updateRestaurantReview,
+  });
+
+  res.status(200).json(updatedRestaurantReview);
+
+  updateRestaurantRating(restaurantReview.restaurantId);
+}
+
+async function updateRestaurantRating(id: string) {
+  const restaurant = await prisma.restaurant.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      RestaurantReview: true,
+    },
+  });
+
+  if (!restaurant) {
+    throw new createHttpError.NotFound("El restaurante no existe");
+  }
+
   const rating = restaurant.RestaurantReview.reduce(
     (acc, restaurantReview) => acc + restaurantReview.rating,
-    createRestaurantReview.rating
+    0
   );
 
   await prisma.restaurant.update({
@@ -63,11 +123,12 @@ async function createRestaurantReview(
       id: restaurant.id,
     },
     data: {
-      rating: rating / (restaurant.RestaurantReview.length + 1),
+      rating: rating / restaurant.RestaurantReview.length,
     },
   });
 }
 
 export default apiHandler({
   POST: withAuth(createRestaurantReview),
+  PUT: withAuth(updateRestaurantReview),
 });

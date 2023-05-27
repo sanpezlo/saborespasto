@@ -12,7 +12,6 @@ import {
 } from "@/context/EditRestaurant";
 import { RestaurantAndDishes } from "@/types/RestaurantAndDishes";
 import { useRouter } from "next/router";
-import { DeleteDishProvider } from "@/context/DeleteDish";
 
 export default function MiRestaurante() {
   const router = useRouter();
@@ -83,10 +82,12 @@ export default function MiRestaurante() {
           </div>
           <div className="bg-white">
             <div className="mx-auto max-w-2xl px-4 pb-10 sm:px-6 lg:max-w-7xl lg:px-8">
-              <Reviews
-                slug={restaurant?.slug || ""}
-                restaurantRating={restaurant?.rating || 0}
-              />
+              {restaurant && (
+                <Reviews
+                  restaurant={restaurant}
+                  restaurantRating={restaurant?.rating || 0}
+                />
+              )}
               <Dishes dishes={restaurant?.Dish || []} isAdmin />
             </div>
           </div>
