@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import createHttpError from "http-errors";
 
 import { apiHandler, withAuth } from "@/lib/api";
 import { ErrorResponse } from "@/types/ErrorResponse";
@@ -16,6 +17,11 @@ async function createOrder(
     ...req.body,
     accountId: account.id,
   });
+
+  if (createOrder.dishes.length === 0)
+    throw new createHttpError.BadRequest(
+      "El pedido debe tener al menos un plato"
+    );
 
   const order = await prisma.order.create({
     data: {

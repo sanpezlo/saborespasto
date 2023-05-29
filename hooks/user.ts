@@ -2,7 +2,7 @@ import { useAuthContext } from "@/context/Auth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-export function useUser() {
+export function useUser({ redirectAdminTo = "/404" }) {
   const { account, isLoadingAccount } = useAuthContext();
   const router = useRouter();
 
@@ -13,10 +13,10 @@ export function useUser() {
       return;
     }
     if (account.admin) {
-      router.push("404");
+      router.push(redirectAdminTo);
       return;
     }
-  }, [account, router, isLoadingAccount]);
+  }, [account, router, isLoadingAccount, redirectAdminTo]);
 
   return { account, isLoadingAccount };
 }
